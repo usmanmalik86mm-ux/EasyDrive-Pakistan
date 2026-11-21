@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import {
   Car,
+  bike, 
+  rickshaw, 
+  Transport, 
   User,
   ShieldCheck,
   Sun,
@@ -11,7 +14,8 @@ import {
   Bell,
   Upload,
   Copy,
-  CheckCircle2
+  CheckCircle2,
+  Image as ImageIcon
 } from 'lucide-react';
 
 const DIRECT_NUMBER = '03338209526';
@@ -21,8 +25,14 @@ const PHOTO_SLOTS = [
   { key: 'back', label: 'Back Side' },
   { key: 'left', label: 'Left Side' },
   { key: 'right', label: 'Right Side' },
-  { key: 'doc', label: 'Vehicle Document' },
-  { key: 'license', label: 'Driving License' }
+  { key: 'NIC doc', label: 'Front Side' }
+  { key: 'NIC doc', label: 'Back Side' }, 
+  { key: 'doc', label: 'Vehicle Document Front' },
+  { key: 'doc', label: 'Vehicle Document Back Side' }
+  { key: 'license', label: 'Driving License Front' }
+  { key: 'license', label: 'Driving License Back' }
+];
+
 ];
 
 export default function App() {
@@ -37,25 +47,25 @@ export default function App() {
     mobile: '',
     regNo: '',
     model: '',
-    method: 'Easypaisa',
+    method: ' Easypaisa, Jazz Cash',
     tid: ''
-    key: 'doc', label: 'Transaction Reciept'
   });
   const [files, setFiles] = useState({});
-  const [perms, setPerms] = useState({
-    gps: True, 
-    notif: True,
-    camera: True,
-    mic: True, 
+  const [perms, setPerms] = useState ({});
   });
   const [driverStatus, setDriverStatus] = useState('new'); // 'new' | 'pending' | 'approved'
   const [welcomeMsg, setWelcomeMsg] = useState('');
 
   // Passenger Booking
   const [ride, setRide] = useState({
-    pickup: ' ',
-    dropoff: ' ',
-    fare: =sum(total travel distance) * 60Rs/Km,
+    / Driver Registration & Permissions
+  const [form, setForm] = useState({
+    name: '',
+    cnic: '',
+    mobile: '',
+    pickup: '...., Karachi',
+    dropoff: '....., Karachi',
+    fare: ride accept Price 40/km+pickup point till drop off point 60Rs/km',
     requested: True, 
   });
 
@@ -104,6 +114,7 @@ export default function App() {
       ...prev,
       [key]: { name: file.name, url: URL.createObjectURL(file) }
     }));
+    setMsg(`${file.name} upload ho gaya.`);
   }
 
   function submitRegistration(e) {
@@ -121,8 +132,7 @@ export default function App() {
   }
 
   function approveDriver() {
-    setDriverStatus('Approved');
-    setDriverStatus ('Not Approved'):
+    setDriverStatus('approved');
     setWelcomeMsg('Welcome aboard! Aapka EasyDrive Driver Pro account approve ho gaya hai — Ab Poora Cash Apka!');
     setMsg('Driver approve ho gaya aur "Welcome aboard" message bhej diya gaya hai.');
   }
@@ -286,9 +296,8 @@ export default function App() {
                 <strong>Name:</strong> {form.name || 'Driver'} • <strong>Gari:</strong> {form.model || 'Car'} ({form.regNo || 'Plate'})
               </div>
               <div style={{ fontSize: '12px', color: theme.muted, marginTop: '6px' }}>
-                Ab Poora Cash Apka • PKR 3,000 Monthly Plan Len Or Poori Kamayi apki• Koi Hidden Charges Nahi
+                Ab Poora Cash Apka • PKR 3,000 Monthly Subscription Plan 
               </div>
-
               {ride.requested && (
                 <div style={{ marginTop: '14px', background: theme.box, padding: '12px', borderRadius: '12px', fontSize: '12px' }}>
                   <div style={{ fontWeight: 900, color: theme.gold }}>New Passenger Ride Request!</div>
@@ -340,7 +349,10 @@ export default function App() {
               {/* Permissions */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '8px' }}>
                 {[
-    
+                  { k: 'gps', l: 'GPS', Icon: MapPin },
+                  { k: 'notif', l: 'Notification', Icon: Bell },
+                  { k: 'camera', l: 'Camera', Icon: Camera },
+                  { k: 'mic', l: 'Mic', Icon: Mic }
                 ].map(({ k, l, Icon }) => (
                   <div
                     key={k}
@@ -389,7 +401,7 @@ export default function App() {
                 { k: 'cnic', p: 'CNIC Number' },
                 { k: 'mobile', p: 'Mobile Number' },
                 { k: 'regNo', p: 'Vehicle Registration Number' },
-2001,2002,......2026,}       { k: 'model', p: 'Vehicle Model' 2000,}
+                { k: 'model', p: 'Vehicle Model' }
               ].map((item) => (
                 <input
                   key={item.k}
@@ -410,13 +422,13 @@ export default function App() {
                 />
               ))}
 
-              {/* 6 Camera/Gallery Uploads */}
+              {/* 10 Gallery + Camera Upload Slots */}
               <div style={{ fontSize: '12px', fontWeight: 800, margin: '6px 0' }}>
-                Vehicle Photos & Docs (Camera / Gallery)
+                Vehicle Photos & Docs (Gallery & Camera)
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
                 {PHOTO_SLOTS.map((s) => (
-                  <label
+                  <div
                     key={s.key}
                     style={{
                       background: theme.box,
@@ -425,25 +437,79 @@ export default function App() {
                       padding: '8px',
                       textAlign: 'center',
                       fontSize: '11px',
-                      fontWeight: 800,
-                      cursor: 'pointer'
+                      fontWeight: 800
                     }}
                   >
-                    <input type="file" accept="image/*" capture="environment" onChange={(e) => handleUpload(s.key, e)} style={{ display: 'none' }} />
                     {files[s.key] ? (
                       <img src={files[s.key].url} alt={s.label} style={{ width: '100%', height: '42px', objectFit: 'cover', borderRadius: '6px' }} />
                     ) : (
                       <Upload size={15} />
                     )}
-                    <div style={{ marginTop: '4px' }}>{s.label}</div>
-                  </label>
+                    <div style={{ margin: '4px 0 6px' }}>{s.label}</div>
+
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      {/* Gallery / File Picker (no capture attribute) */}
+                      <label
+                        style={{
+                          flex: 1,
+                          padding: '5px 4px',
+                          borderRadius: '6px',
+                          background: theme.green,
+                          color: '#fff',
+                          fontSize: '10px',
+                          fontWeight: 800,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '2px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleUpload(s.key, e)}
+                          style={{ display: 'none' }}
+                        />
+                        <ImageIcon size={11} /> Gallery
+                      </label>
+
+                      {/* Direct Camera Capture */}
+                      <label
+                        style={{
+                          flex: 1,
+                          padding: '5px 4px',
+                          borderRadius: '6px',
+                          background: theme.card,
+                          border: `1px solid ${theme.border}`,
+                          color: theme.text,
+                          fontSize: '10px',
+                          fontWeight: 800,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '2px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          onChange={(e) => handleUpload(s.key, e)}
+                          style={{ display: 'none' }}
+                        />
+                        <Camera size={11} /> Camera
+                      </label>
+                    </div>
+                  </div>
                 ))}
               </div>
 
               {/* Payment to 03338209526 */}
               <div style={{ background: theme.box, borderRadius: '10px', padding: '10px', marginBottom: '8px', border: `1px solid ${theme.border}` }}>
-                <div style={{ fontSize: '11px', color: theme.muted }}>PKR 3,000 Monthly Payment Account</div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2px' }}>
+                <div style={{ fontSize: '11px', color: theme.muted }}>PKR 3,000 Monthly Subscription Payment Account</div>
+                <div stylMonthly play: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2px' }}>
                   <strong style={{ fontSize: '15px', color: theme.gold }}>{DIRECT_NUMBER}</strong>
                   <button
                     type="button"
@@ -484,7 +550,6 @@ export default function App() {
                 value={form.tid}
                 onChange={(e) => setForm({ ...form, tid: e.target.value })}
                 placeholder="Enter Payment Transaction ID (TID)"
-                { key: 'Transaction Reciept', label: 'Attach & Upload' },
                 style={{
                   width: '100%',
                   padding: '9px',
@@ -524,6 +589,10 @@ export default function App() {
         <div style={{ background: theme.card, border: `1.5px solid ${theme.border}`, borderRadius: '16px', padding: '14px' }}>
           <div style={{ fontSize: '16px', fontWeight: 900, color: theme.green, marginBottom: '10px' }}>
             EasyDrive Passenger Booking
+            const [form, setForm] = useState({
+            name: '',
+            cnic: '',
+            mobile: '',
           </div>
           <input
             value={ride.pickup}
@@ -538,7 +607,7 @@ export default function App() {
             style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, marginBottom: '10px', boxSizing: 'border-box' }}
           />
           <div style={{ fontSize: '13px', fontWeight: 800, marginBottom: '10px' }}>
-            Fare: Rs. {ride.fare} • 2% Service Charge Fee: Rs. {(ride.fare * 0.03).toFixed(2)}
+            Fare: Rs. {ride.fare} • 2% Fee: Rs. {(ride.fare * 0.02).toFixed(2)}
           </div>
           <button
             onClick={() => {
@@ -562,7 +631,7 @@ export default function App() {
             <div><strong>Driver:</strong> {form.name || 'Not submitted yet'}</div>
             <div><strong>CNIC:</strong> {form.cnic || '-'} | <strong>Mobile:</strong> {form.mobile || '-'}</div>
             <div><strong>Vehicle:</strong> {form.model || '-'} ({form.regNo || '-'})</div>
-            <div><strong>Payment:</strong> PKR 3,000 via {form.method} to {DIRECT_NUMBER} • TID: {form.tid || '-'}</div>
+JazzCash             <div><strong>Payment:</strong> PKR 3,000 via EasyPaisa/ JazzCash{form.method} to {DIRECT_NUMBER} • TID: {form.tid || '-'}</div>
             <div><strong>Status:</strong> <strong style={{ color: theme.gold }}>{driverStatus.toUpperCase()}</strong></div>
           </div>
 
@@ -580,7 +649,7 @@ export default function App() {
               cursor: 'pointer'
             }}
           >
-            Approve, Not Approved & Send "Welcome aboard"
+            Approve & Send "Welcome aboard"
           </button>
         </div>
       )}
