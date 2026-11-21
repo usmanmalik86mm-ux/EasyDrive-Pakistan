@@ -1,11 +1,34 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
-export default function MapComponent() {
-  return (
-    <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#e2e8f0', borderRadius: '8px', margin: '10px 0' }}>
-      <h3 style={{ margin: '0 0 8px 0', color: '#1e293b' }}>Karachi Route Map</h3>
-      <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>GPS tracking active for EasyDrive Pakistan.</p>
-    </div>
-  );
+export default function MapView({ center = [67.0011, 24.8607], zoom = 12 }) {
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+
+  useEffect(() => {
+    if (map.current) return;
+
+    map.current = new maplibregl.Map({
+      container: mapContainer.current,
+      style: {
+        version: 8,
+        sources: {
+          osm: {
+            type: 'raster',
+            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tileSize: 256,
+            attribution: '&copy; OpenStreetMap Contributors'
+          }
+        },
+        layers: [{ id: 'osm', type: 'raster', source: 'osm' }]
+      },
+      center: center, // Default: Karachi [Lng, Lat]
+      zoom: zoom
+    });
+
+    map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
+  }, []);
+
+  return <div ref={mapContainer} style={{ width: '100%', height: '300px', borderRadius: '12px' }} />;
 }
-
