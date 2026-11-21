@@ -6,9 +6,6 @@ import {
   Sun,
   Moon,
   Camera,
-  Mic,
-  MapPin,
-  Bell,
   Upload,
   Copy,
   CheckCircle2,
@@ -19,7 +16,9 @@ import {
   Megaphone,
   Route,
   Plus,
-  Trash2
+  Trash2,
+  Clock,
+  XCircle
 } from 'lucide-react';
 
 const DIRECT_NUMBER = '03338209526';
@@ -52,7 +51,7 @@ export default function App() {
   const [portal, setPortal] = useState('driver'); // 'driver' | 'passenger' | 'admin'
   const [sunlight, setSunlight] = useState(false);
 
-  // Driver registration, docs, permissions & subscription
+  // Driver registration, docs & subscription
   const [form, setForm] = useState({
     name: '',
     cnic: '',
@@ -63,13 +62,9 @@ export default function App() {
     tid: ''
   });
   const [files, setFiles] = useState({});
-  const [perms, setPerms] = useState({
-    gps: false,
-    notif: false,
-    camera: false,
-    mic: false
-  });
-  const [driverStatus, setDriverStatus] = useState('new'); // 'new' | 'pending' | 'approved'
+
+  // Status values: 'pending' | 'approved' | 'not_approved'
+  const [regStatus, setRegStatus] = useState('pending');
   const [daysLeft, setDaysLeft] = useState(30);
   const [priority, setPriority] = useState(68);
   const [completedCount, setCompletedCount] = useState(0);
@@ -89,7 +84,7 @@ export default function App() {
     payment: 'JazzCash',
     pin: '4829',
     pinInput: '',
-    stage: 'idle' // 'idle' | 'searching' | 'arriving' | 'in_progress' | 'completed'
+    stage: 'idle'
   });
 
   const [msg, setMsg] = useState('');
@@ -117,40 +112,22 @@ export default function App() {
         gold: '#f59e0b'
       };
 
-  // Single shared fare calculation for Passenger, Driver & Admin
+  const regStatusLabel =
+    regStatus === 'approved'
+      ? 'Approved (Welcome aboard)'
+      : regStatus === 'not_approved'
+      ? 'Not Approved'
+      : 'Registration (In-Progress Pending)';
+
   const selectedTier = TIERS.find((t) => t.id === ride.tier) || TIERS[0];
   const validStops = stops.map((s) => s.trim()).filter(Boolean);
-  const extraStopsKm = validStops.length * 2; // +2 km route allowance per extra stop
+  const extraStopsKm = validStops.length * 2;
   const totalRouteKm = Number(ride.km || 1) + extraStopsKm;
-  const stopsFee = validStops.length * 60; // Rs. 60 per extra destination stop
+  const stopsFee = validStops.length * 60;
   const calculatedFare = Math.round(selectedTier.base + totalRouteKm * selectedTier.perKm + stopsFee);
   const feeTwoPercent = Number((calculatedFare * 0.02).toFixed(2));
   const driverNetCash = Number((calculatedFare - feeTwoPercent).toFixed(2));
   const estMinutes = Math.max(5, Math.round(totalRouteKm * 2.4 + validStops.length * 4));
-
-  function addDestinationStop() {
-    if (!newStopText.trim()) return;
-    setStops((prev) => [...prev, newStopText.trim()]);
-    setNewStopText('');
-  }
-
-  function removeDestinationStop(index) {
-    setStops((prev) => prev.filter((_, i) => i !== index));
-  }
-
-  function enablePermissions() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        () => {},
-        () => {}
-      );
-    }
-    if ('Notification' in window) {
-      Notification.requestPermission().catch(() => {});
-    }
-    setPerms({ gps: true, notif: true, camera: true, mic: true });
-    setMsg('GPS, Notification, Camera aur Mic permissions active ho gayi hain.');
-  }
 
   function handleUpload(key, e) {
     const file = e.target.files?.[0];
@@ -159,7 +136,7 @@ export default function App() {
       ...prev,
       [key]: { name: file.name, url: URL.createObjectURL(file) }
     }));
-    setMsg(`${file.name} upload ho gaya.`);
+    setMsg(`${file.name} attach ho gaya hai (Admin panel mein show hoga).`);
   }
 
   function submitRegistration(e) {
@@ -172,15 +149,24 @@ export default function App() {
       setMsg(`Please PKR 3,000 (${form.method} -> ${DIRECT_NUMBER}) ki Transaction ID bharein.`);
       return;
     }
-    setDriverStatus('pending');
-    setMsg('Registration aur PKR 3,000 payment pending mein chali gayi hain. Admin tab se Approve karein.');
+    setRegStatus('pending');
+    setWelcomeMsg('');
+    setMsg('Registration submit ho gayi hai! Status: Registration (In-Progress Pending).');
   }
 
-  function approveDriver() {
-    setDriverStatus('approved');
-    setDaysLeft(30);
-    setWelcomeMsg('Welcome aboard! Aapka EasyDrive Driver Pro account approve ho gaya hai — Ab Poora Cash Apka!');
-    setMsg('Driver approve ho gaya aur "Welcome aboard" notification bhej diya gaya hai.');
+  function setAdminDriverStatus(nextStatus) {
+    setRegStatus(nextStatus);
+    if (nextStatus === 'approved') {
+      setDaysLeft(30);
+      setWelcomeMsg('Welcome aboard! Aapka EasyDrive Driver Pro account approve ho gaya hai — Ab Poora Cash Apka!');
+      setMsg('Status set to Approved (Welcome aboard).');
+    } else if (nextStatus === 'not_approved') {
+      setWelcomeMsg('');
+      setMsg('Status set to Not Approved.');
+    } else {
+      setWelcomeMsg('');
+      setMsg('Status set to Registration (In-Progress Pending).');
+    }
   }
 
   function startPassengerRide() {
@@ -238,6 +224,7 @@ export default function App() {
   }
 
   const routeSummaryText = [ride.pickup, ...validStops, ride.dropoff].filter(Boolean).join(' → ');
+  const attachedSlots = PHOTO_SLOTS.filter((s) => files[s.key]);
 
   if (screen === 'promo') {
     return (
@@ -368,7 +355,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Welcome Aboard Approval Alert */}
+      {/* Welcome Aboard Alert */}
       {welcomeMsg && (
         <div
           style={{
@@ -417,7 +404,7 @@ export default function App() {
         </div>
       )}
 
-      {/* General Status / Notice Message */}
+      {/* Status / Notice Message */}
       {msg && (
         <div
           style={{
@@ -442,8 +429,32 @@ export default function App() {
 
       {/* ==================== 1. DRIVER PRO ==================== */}
       {portal === 'driver' && (
-        <>
-          {driverStatus === 'approved' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {/* Registration Status Banner */}
+          <div
+            style={{
+              background: theme.card,
+              border: `1.5px solid ${
+                regStatus === 'approved' ? theme.green : regStatus === 'not_approved' ? '#dc2626' : theme.gold
+              }`,
+              borderRadius: '14px',
+              padding: '12px'
+            }}
+          >
+            <div style={{ fontSize: '11px', color: theme.muted, fontWeight: 800 }}>Registration Status</div>
+            <div
+              style={{
+                fontSize: '14px',
+                fontWeight: 900,
+                marginTop: '3px',
+                color: regStatus === 'approved' ? theme.green : regStatus === 'not_approved' ? '#ef4444' : theme.gold
+              }}
+            >
+              {regStatusLabel}
+            </div>
+          </div>
+
+          {regStatus === 'approved' && (
             <div style={{ background: theme.card, border: `1.5px solid ${theme.green}`, borderRadius: '16px', padding: '14px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '17px', fontWeight: 900, color: theme.green }}>Driver Pro Active</span>
@@ -471,7 +482,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Active Ride Dispatch Card (Same Final Fare as Passenger) */}
               {ride.stage !== 'idle' && ride.stage !== 'completed' && (
                 <div style={{ marginTop: '12px', background: theme.box, border: `1px solid ${theme.gold}`, borderRadius: '12px', padding: '12px' }}>
                   <div style={{ fontSize: '13px', fontWeight: 900, color: theme.gold }}>
@@ -521,161 +531,117 @@ export default function App() {
                 </div>
               )}
 
-              <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                <button
-                  onClick={triggerSOS}
-                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}
+              <button
+                onClick={triggerSOS}
+                style={{ marginTop: '12px', width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}
+              >
+                SOS Emergency Alert
+              </button>
+            </div>
+          )}
+
+          {/* Driver Registration Form (Without GPS/Notification/Camera/Mic buttons) */}
+          <form onSubmit={submitRegistration} style={{ background: theme.card, border: `1.5px solid ${theme.border}`, borderRadius: '16px', padding: '14px' }}>
+            <div style={{ fontSize: '16px', fontWeight: 900, color: theme.green, marginBottom: '10px' }}>
+              Driver Registration & PKR 3,000 Payment
+            </div>
+
+            {[
+              { k: 'name', p: 'Driver Name' },
+              { k: 'cnic', p: 'CNIC Number' },
+              { k: 'mobile', p: 'Mobile Number' },
+              { k: 'regNo', p: 'Vehicle Registration Number' },
+              { k: 'model', p: 'Vehicle Model' }
+            ].map((item) => (
+              <input
+                key={item.k}
+                value={form[item.k]}
+                onChange={(e) => setForm({ ...form, [item.k]: e.target.value })}
+                placeholder={item.p}
+                style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, fontSize: '13px', marginBottom: '8px', boxSizing: 'border-box' }}
+              />
+            ))}
+
+            <div style={{ fontSize: '12px', fontWeight: 800, margin: '6px 0' }}>
+              Vehicle Photos, Docs & Payment Receipt (Gallery & Camera)
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+              {PHOTO_SLOTS.map((s) => (
+                <div
+                  key={s.key}
+                  style={{
+                    background: theme.box,
+                    border: `1px dashed ${files[s.key] ? theme.green : theme.border}`,
+                    borderRadius: '10px',
+                    padding: '8px',
+                    textAlign: 'center',
+                    fontSize: '11px',
+                    fontWeight: 800
+                  }}
                 >
-                  SOS Alert
-                </button>
+                  {files[s.key] ? (
+                    <img src={files[s.key].url} alt={s.label} style={{ width: '100%', height: '42px', objectFit: 'cover', borderRadius: '6px' }} />
+                  ) : (
+                    <Upload size={15} />
+                  )}
+                  <div style={{ margin: '4px 0 6px' }}>{s.label}</div>
+
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <label style={{ flex: 1, padding: '5px 4px', borderRadius: '6px', background: theme.green, color: '#fff', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', cursor: 'pointer' }}>
+                      <input type="file" accept="image/*" onChange={(e) => handleUpload(s.key, e)} style={{ display: 'none' }} />
+                      <ImageIcon size={11} /> Gallery
+                    </label>
+                    <label style={{ flex: 1, padding: '5px 4px', borderRadius: '6px', background: theme.card, border: `1px solid ${theme.border}`, color: theme.text, fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', cursor: 'pointer' }}>
+                      <input type="file" accept="image/*" capture="environment" onChange={(e) => handleUpload(s.key, e)} style={{ display: 'none' }} />
+                      <Camera size={11} /> Camera
+                    </label>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: theme.box, borderRadius: '10px', padding: '10px', marginBottom: '8px', border: `1px solid ${theme.border}` }}>
+              <div style={{ fontSize: '11px', color: theme.muted }}>PKR 3,000 / 30 Days Payment Account</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2px' }}>
+                <strong style={{ fontSize: '15px', color: theme.gold }}>{DIRECT_NUMBER}</strong>
                 <button
-                  onClick={() => setDriverStatus('new')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: `1px solid ${theme.border}`, background: theme.box, color: theme.text, fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard?.writeText(DIRECT_NUMBER);
+                    setMsg(`${DIRECT_NUMBER} copy ho gaya.`);
+                  }}
+                  style={{ padding: '4px 8px', borderRadius: '6px', border: 'none', background: theme.green, color: '#fff', fontSize: '11px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}
                 >
-                  Registration / Docs
+                  <Copy size={12} /> Copy
                 </button>
               </div>
             </div>
-          ) : (
-            <form onSubmit={submitRegistration} style={{ background: theme.card, border: `1.5px solid ${theme.border}`, borderRadius: '16px', padding: '14px' }}>
-              <div style={{ fontSize: '16px', fontWeight: 900, color: theme.green, marginBottom: '10px' }}>
-                Driver Registration & PKR 3,000 Payment
-              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '8px' }}>
-                {[
-                  { k: 'gps', l: 'GPS', Icon: MapPin },
-                  { k: 'notif', l: 'Notification', Icon: Bell },
-                  { k: 'camera', l: 'Camera', Icon: Camera },
-                  { k: 'mic', l: 'Mic', Icon: Mic }
-                ].map(({ k, l, Icon }) => (
-                  <div
-                    key={k}
-                    style={{
-                      background: theme.box,
-                      border: `1px solid ${perms[k] ? theme.green : theme.border}`,
-                      borderRadius: '8px',
-                      padding: '7px 8px',
-                      fontSize: '11px',
-                      fontWeight: 800,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Icon size={13} /> {l}
-                    </span>
-                    <span style={{ color: perms[k] ? theme.green : theme.gold }}>{perms[k] ? 'ON' : 'OFF'}</span>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={enablePermissions}
-                style={{ width: '100%', padding: '9px', borderRadius: '9px', border: 'none', background: theme.box, color: theme.text, fontWeight: 800, fontSize: '12px', marginBottom: '10px', cursor: 'pointer' }}
-              >
-                Enable GPS, Notification, Camera & Mic
-              </button>
-
-              {[
-                { k: 'name', p: 'Driver Name' },
-                { k: 'cnic', p: 'CNIC Number' },
-                { k: 'mobile', p: 'Mobile Number' },
-                { k: 'regNo', p: 'Vehicle Registration Number' },
-                { k: 'model', p: 'Vehicle Model' }
-              ].map((item) => (
-                <input
-                  key={item.k}
-                  value={form[item.k]}
-                  onChange={(e) => setForm({ ...form, [item.k]: e.target.value })}
-                  placeholder={item.p}
-                  style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, fontSize: '13px', marginBottom: '8px', boxSizing: 'border-box' }}
-                />
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+              {['Easypaisa', 'JazzCash'].map((m) => (
+                <button
+                  type="button"
+                  key={m}
+                  onClick={() => setForm({ ...form, method: m })}
+                  style={{ flex: 1, padding: '8px', borderRadius: '8px', border: form.method === m ? `2px solid ${theme.green}` : `1px solid ${theme.border}`, background: form.method === m ? theme.box : theme.bg, color: theme.text, fontWeight: 800, fontSize: '12px' }}
+                >
+                  {m}
+                </button>
               ))}
+            </div>
 
-              <div style={{ fontSize: '12px', fontWeight: 800, margin: '6px 0' }}>
-                Vehicle Photos, Docs & Payment Receipt (Gallery & Camera)
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
-                {PHOTO_SLOTS.map((s) => (
-                  <div
-                    key={s.key}
-                    style={{
-                      background: theme.box,
-                      border: `1px dashed ${files[s.key] ? theme.green : theme.border}`,
-                      borderRadius: '10px',
-                      padding: '8px',
-                      textAlign: 'center',
-                      fontSize: '11px',
-                      fontWeight: 800
-                    }}
-                  >
-                    {files[s.key] ? (
-                      <img src={files[s.key].url} alt={s.label} style={{ width: '100%', height: '42px', objectFit: 'cover', borderRadius: '6px' }} />
-                    ) : (
-                      <Upload size={15} />
-                    )}
-                    <div style={{ margin: '4px 0 6px' }}>{s.label}</div>
+            <input
+              value={form.tid}
+              onChange={(e) => setForm({ ...form, tid: e.target.value })}
+              placeholder="Enter Payment Transaction ID (TID)"
+              style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, fontSize: '13px', marginBottom: '10px', boxSizing: 'border-box' }}
+            />
 
-                    <div style={{ display: 'flex', gap: '4px' }}>
-                      <label style={{ flex: 1, padding: '5px 4px', borderRadius: '6px', background: theme.green, color: '#fff', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', cursor: 'pointer' }}>
-                        <input type="file" accept="image/*" onChange={(e) => handleUpload(s.key, e)} style={{ display: 'none' }} />
-                        <ImageIcon size={11} /> Gallery
-                      </label>
-                      <label style={{ flex: 1, padding: '5px 4px', borderRadius: '6px', background: theme.card, border: `1px solid ${theme.border}`, color: theme.text, fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', cursor: 'pointer' }}>
-                        <input type="file" accept="image/*" capture="environment" onChange={(e) => handleUpload(s.key, e)} style={{ display: 'none' }} />
-                        <Camera size={11} /> Camera
-                      </label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ background: theme.box, borderRadius: '10px', padding: '10px', marginBottom: '8px', border: `1px solid ${theme.border}` }}>
-                <div style={{ fontSize: '11px', color: theme.muted }}>PKR 3,000 / 30 Days Payment Account</div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2px' }}>
-                  <strong style={{ fontSize: '15px', color: theme.gold }}>{DIRECT_NUMBER}</strong>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard?.writeText(DIRECT_NUMBER);
-                      setMsg(`${DIRECT_NUMBER} copy ho gaya.`);
-                    }}
-                    style={{ padding: '4px 8px', borderRadius: '6px', border: 'none', background: theme.green, color: '#fff', fontSize: '11px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}
-                  >
-                    <Copy size={12} /> Copy
-                  </button>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                {['Easypaisa', 'JazzCash'].map((m) => (
-                  <button
-                    type="button"
-                    key={m}
-                    onClick={() => setForm({ ...form, method: m })}
-                    style={{ flex: 1, padding: '8px', borderRadius: '8px', border: form.method === m ? `2px solid ${theme.green}` : `1px solid ${theme.border}`, background: form.method === m ? theme.box : theme.bg, color: theme.text, fontWeight: 800, fontSize: '12px' }}
-                  >
-                    {m}
-                  </button>
-                ))}
-              </div>
-
-              <input
-                value={form.tid}
-                onChange={(e) => setForm({ ...form, tid: e.target.value })}
-                placeholder="Enter Payment Transaction ID (TID)"
-                style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, fontSize: '13px', marginBottom: '10px', boxSizing: 'border-box' }}
-              />
-
-              <button type="submit" style={{ width: '100%', padding: '12px', borderRadius: '11px', border: 'none', background: theme.green, color: '#fff', fontSize: '14px', fontWeight: 900, cursor: 'pointer' }}>
-                {driverStatus === 'pending' ? 'Pending Admin Approval...' : 'Submit Registration & TID'}
-              </button>
-            </form>
-          )}
-        </>
+            <button type="submit" style={{ width: '100%', padding: '12px', borderRadius: '11px', border: 'none', background: theme.green, color: '#fff', fontSize: '14px', fontWeight: 900, cursor: 'pointer' }}>
+              Submit Registration ({regStatusLabel})
+            </button>
+          </form>
+        </div>
       )}
 
       {/* ==================== 2. PASSENGER ==================== */}
@@ -685,7 +651,6 @@ export default function App() {
             EasyDrive Passenger • Custom Locations & Multi-Stops
           </div>
 
-          {/* Quick Shortcuts */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
             {KARACHI_ROUTES.map((r, idx) => (
               <button
@@ -703,11 +668,10 @@ export default function App() {
           <input
             value={ride.pickup}
             onChange={(e) => setRide({ ...ride, pickup: e.target.value })}
-            placeholder="Any Pickup Location (e.g. Malir Cantt, DHA Phase 6...)"
+            placeholder="Any Pickup Location"
             style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, marginBottom: '8px', boxSizing: 'border-box' }}
           />
 
-          {/* Multiple Destinations / Stops */}
           <div style={{ background: theme.box, borderRadius: '10px', padding: '8px', marginBottom: '8px' }}>
             <div style={{ fontSize: '11px', fontWeight: 800, marginBottom: '6px' }}>
               Additional Stops / Destinations ({validStops.length})
@@ -749,7 +713,6 @@ export default function App() {
             style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, marginBottom: '8px', boxSizing: 'border-box' }}
           />
 
-          {/* Distance KM Input */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: theme.box, padding: '8px 10px', borderRadius: '9px', marginBottom: '10px', fontSize: '12px' }}>
             <span>Base Route Distance (km):</span>
             <input
@@ -762,7 +725,6 @@ export default function App() {
             />
           </div>
 
-          {/* Ride Tiers with Updated perKm */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '10px' }}>
             {TIERS.map((t) => (
               <button
@@ -777,7 +739,6 @@ export default function App() {
             ))}
           </div>
 
-          {/* Payment Method */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
             {['Cash', 'JazzCash', 'Easypaisa'].map((pm) => (
               <button
@@ -791,7 +752,6 @@ export default function App() {
             ))}
           </div>
 
-          {/* Final Fare & Breakdown (Identical for Passenger & Driver) */}
           <div style={{ background: theme.box, borderRadius: '12px', padding: '10px', marginBottom: '10px', fontSize: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 900 }}>
               <span>Final Fare ({totalRouteKm} km • ~{estMinutes} min):</span>
@@ -848,13 +808,13 @@ export default function App() {
       {portal === 'admin' && (
         <div style={{ background: theme.card, border: `1.5px solid ${theme.border}`, borderRadius: '16px', padding: '14px' }}>
           <div style={{ fontSize: '16px', fontWeight: 900, color: theme.green, marginBottom: '10px' }}>
-            Super Admin Control & Live Analytics
+            Super Admin Control & Document Review
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
             <div style={{ background: theme.box, padding: '10px', borderRadius: '10px' }}>
               <div style={{ fontSize: '10px', color: theme.muted }}>Sub Revenue (30d)</div>
-              <div style={{ fontSize: '15px', fontWeight: 900 }}>PKR {driverStatus === 'approved' ? '3,000' : '0'}</div>
+              <div style={{ fontSize: '15px', fontWeight: 900 }}>PKR {regStatus === 'approved' ? '3,000' : '0'}</div>
             </div>
             <div style={{ background: theme.box, padding: '10px', borderRadius: '10px' }}>
               <div style={{ fontSize: '10px', color: theme.muted }}>2% Ride Fee Earned</div>
@@ -864,34 +824,4 @@ export default function App() {
 
           <div style={{ background: theme.box, borderRadius: '10px', padding: '10px', fontSize: '12px', marginBottom: '12px' }}>
             <div><strong>Driver:</strong> {form.name || 'Not submitted yet'}</div>
-            <div><strong>CNIC:</strong> {form.cnic || '-'} | <strong>Mobile:</strong> {form.mobile || '-'}</div>
-            <div><strong>Vehicle:</strong> {form.model || '-'} ({form.regNo || '-'})</div>
-            <div><strong>Payment:</strong> PKR 3,000 via {form.method} to {DIRECT_NUMBER} • TID: {form.tid || '-'}</div>
-            <div><strong>Receipt Uploaded:</strong> {files.paymentProof ? 'Yes ✓' : 'No'}</div>
-            <div><strong>Status:</strong> <strong style={{ color: theme.gold }}>{driverStatus.toUpperCase()}</strong></div>
-          </div>
-
-          <button
-            onClick={approveDriver}
-            style={{ width: '100%', padding: '12px', borderRadius: '11px', border: 'none', background: theme.green, color: '#fff', fontSize: '14px', fontWeight: 900, marginBottom: '12px', cursor: 'pointer' }}
-          >
-            Approve & Send "Welcome aboard"
-          </button>
-
-          <form onSubmit={sendBroadcast} style={{ background: theme.box, borderRadius: '10px', padding: '10px' }}>
-            <div style={{ fontSize: '12px', fontWeight: 800, marginBottom: '6px' }}>Send Broadcast / Warning to Drivers</div>
-            <input
-              value={broadcastInput}
-              onChange={(e) => setBroadcastInput(e.target.value)}
-              placeholder="Write alert or bonus message..."
-              style={{ width: '100%', padding: '8px', borderRadius: '8px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, fontSize: '12px', marginBottom: '8px', boxSizing: 'border-box' }}
-            />
-            <button type="submit" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: 'none', background: theme.gold, color: '#090d16', fontWeight: 900, fontSize: '12px', cursor: 'pointer' }}>
-              Broadcast Message
-            </button>
-          </form>
-        </div>
-      )}
-    </div>
-  );
-}
+            <div><strong>CNIC:</strong> {form.cnic || '-'} |
