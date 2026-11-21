@@ -16,7 +16,8 @@ import {
   ShieldCheck,
   LogIn,
   Check,
-  X
+  X,
+  Landmark
 } from 'lucide-react';
 import MapView from './components/MapView';
 import { supabase } from './lib/supabase';
@@ -307,35 +308,102 @@ export default function App() {
         <div
           style={{
             minHeight: 'calc(100vh - 44px)',
-            background: 'linear-gradient(180deg, #16a34a 0%, #15803d 68%, #f0fdf4 100%)',
+            background: 'linear-gradient(180deg, #16a34a 0%, #15803d 62%, #064e3b 100%)',
             color: '#fff',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            padding: '24px 18px'
+            padding: '22px 18px'
           }}
         >
-          <div style={{ textAlign: 'center', marginTop: '24px' }}>
+          <div style={{ textAlign: 'center', marginTop: '12px' }}>
             <div
               style={{
-                width: '78px',
-                height: '78px',
+                width: '74px',
+                height: '74px',
                 borderRadius: '22px',
                 background: '#fff',
                 color: '#15803d',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                margin: '0 auto 14px'
+                margin: '0 auto 12px',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.18)'
               }}
             >
-              <Car size={40} />
+              <Car size={38} />
             </div>
             <h1 style={{ margin: 0, fontSize: '26px', fontWeight: 800 }}>EasyDrive-Pakistan</h1>
-            <p style={{ margin: '6px 0 0', fontSize: '15px' }}>Apke Safar Main Humsafar</p>
-            <p style={{ margin: '10px 0 0', fontSize: '12px', opacity: 0.9 }}>
-              Karachi • Economy Rs. 320 • Business Rs. 520 • 2% Fee
-            </p>
+            <p style={{ margin: '6px 0 0', fontSize: '15px', fontWeight: 500 }}>Apke Safar Main Humsafar</p>
+
+            {/* Mazar-e-Quaid & Faisal Mosque Showcase */}
+            <div
+              style={{
+                marginTop: '18px',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '10px',
+                textAlign: 'left'
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.14)',
+                  backdropFilter: 'blur(6px)',
+                  border: '1px solid rgba(255, 255, 255, 0.28)',
+                  borderRadius: '14px',
+                  padding: '12px'
+                }}
+              >
+                <div
+                  style={{
+                    height: '76px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(220,252,231,0.85) 100%)',
+                    color: '#14532d',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '8px'
+                  }}
+                >
+                  <Landmark size={26} />
+                  <span style={{ fontSize: '10px', fontWeight: 700, marginTop: '4px' }}>MAZAR-E-QUAID</span>
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 800 }}>Mazar-e-Quaid</div>
+                <div style={{ fontSize: '11px', opacity: 0.9 }}>Heritage of Pakistan</div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.14)',
+                  backdropFilter: 'blur(6px)',
+                  border: '1px solid rgba(255, 255, 255, 0.28)',
+                  borderRadius: '14px',
+                  padding: '12px'
+                }}
+              >
+                <div
+                  style={{
+                    height: '76px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(209,250,229,0.85) 100%)',
+                    color: '#065f46',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '8px'
+                  }}
+                >
+                  <Landmark size={26} />
+                  <span style={{ fontSize: '10px', fontWeight: 700, marginTop: '4px' }}>FAISAL MOSQUE</span>
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 800 }}>Islamabad Mosque</div>
+                <div style={{ fontSize: '11px', opacity: 0.9 }}>Faisal Mosque Landmark</div>
+              </div>
+            </div>
           </div>
 
           <button
@@ -349,7 +417,8 @@ export default function App() {
               color: '#fff',
               fontSize: '16px',
               fontWeight: 800,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              marginTop: '18px'
             }}
           >
             Get Started →
