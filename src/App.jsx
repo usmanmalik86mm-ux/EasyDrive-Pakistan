@@ -18,7 +18,10 @@ import {
   Plus,
   Trash2,
   Clock,
-  XCircle
+  XCircle,
+  Sparkles,
+  Navigation,
+  Shield
 } from 'lucide-react';
 
 const DIRECT_NUMBER = '03338209526';
@@ -46,80 +49,312 @@ const TIERS = [
   { id: 'Comfort', label: 'Comfort', base: 300, perKm: 90 }
 ];
 
-function LandingHeroGraphic() {
+function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
+  const activeTier = TIERS.find((t) => t.id === previewTier) || TIERS[0];
+  const sampleFare = Math.round(activeTier.base + 6 * activeTier.perKm);
+
+  const carFill =
+    previewTier === 'Comfort'
+      ? '#f59e0b'
+      : previewTier === 'Business'
+      ? '#38bdf8'
+      : '#4ade80';
+
   return (
     <div
       style={{
-        background: 'rgba(9, 13, 22, 0.45)',
-        border: '1px solid rgba(255, 255, 255, 0.22)',
-        borderRadius: '20px',
-        padding: '12px',
-        marginTop: '18px',
-        boxShadow: '0 14px 30px rgba(0, 0, 0, 0.28)'
+        position: 'relative',
+        maxWidth: '430px',
+        minHeight: '100vh',
+        margin: '0 auto',
+        background:
+          'radial-gradient(circle at 80% 12%, rgba(245, 158, 11, 0.22), transparent 36%), radial-gradient(circle at 18% 25%, rgba(34, 197, 94, 0.28), transparent 45%), linear-gradient(165deg, #07131a 0%, #0b241d 52%, #070b12 100%)',
+        color: '#f8fafc',
+        padding: '22px 18px 26px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        overflow: 'hidden',
+        boxSizing: 'border-box'
       }}
     >
-      <svg
-        viewBox="0 0 360 165"
-        width="100%"
-        height="auto"
-        role="img"
-        aria-label="EasyDrive Pakistan Ride Visual"
-        style={{ display: 'block', borderRadius: '14px' }}
-      >
-        <defs>
-          <linearGradient id="skyGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#0f172a" />
-            <stop offset="100%" stopColor="#14532d" />
-          </linearGradient>
-          <linearGradient id="carBody" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#fde047" />
-          </linearGradient>
-        </defs>
+      {/* Top Brand Pill */}
+      <div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              borderRadius: '999px',
+              background: 'rgba(15, 23, 42, 0.72)',
+              border: '1px solid rgba(253, 224, 71, 0.35)',
+              color: '#fde047',
+              fontSize: '11px',
+              fontWeight: 900,
+              letterSpacing: '0.8px'
+            }}
+          >
+            <Sparkles size={13} /> EASYDRIVE-PAKISTAN
+          </span>
 
-        <rect x="0" y="0" width="360" height="165" rx="14" fill="url(#skyGrad)" />
+          <span
+            style={{
+              padding: '6px 11px',
+              borderRadius: '999px',
+              background: 'rgba(22, 163, 74, 0.22)',
+              border: '1px solid rgba(74, 222, 128, 0.35)',
+              color: '#86efac',
+              fontSize: '11px',
+              fontWeight: 800
+            }}
+          >
+            PKR 3,000 / 30 Days
+          </span>
+        </div>
 
-        {/* City skyline silhouettes */}
-        <rect x="24" y="42" width="32" height="68" rx="4" fill="#1e293b" opacity="0.85" />
-        <rect x="64" y="28" width="40" height="82" rx="4" fill="#1e293b" opacity="0.9" />
-        <rect x="112" y="50" width="28" height="60" rx="4" fill="#1e293b" opacity="0.75" />
-        <rect x="225" y="34" width="38" height="76" rx="4" fill="#1e293b" opacity="0.85" />
-        <rect x="270" y="48" width="34" height="62" rx="4" fill="#1e293b" opacity="0.8" />
-        <rect x="310" y="38" width="28" height="72" rx="4" fill="#1e293b" opacity="0.9" />
+        {/* Hero Headline */}
+        <div style={{ marginTop: '18px' }}>
+          <h1
+            style={{
+              fontSize: '32px',
+              fontWeight: 900,
+              lineHeight: 1.08,
+              margin: 0,
+              letterSpacing: '-0.5px',
+              background: 'linear-gradient(90deg, #ffffff 0%, #bbf7d0 55%, #fde047 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
+          >
+            AB POORA CASH APKA
+          </h1>
+          <p
+            style={{
+              margin: '8px 0 0',
+              fontSize: '13px',
+              lineHeight: 1.45,
+              color: '#cbd5e1'
+            }}
+          >
+            Drivers ke liye full monthly freedom aur passengers ke liye PIN-secured, transparent city rides.
+          </p>
+        </div>
 
-        {/* Route pin & arc */}
-        <path
-          d="M 55 95 Q 180 18 302 92"
-          fill="none"
-          stroke="#4ade80"
-          strokeWidth="2.5"
-          strokeDasharray="6 5"
-        />
-        <circle cx="55" cy="95" r="6" fill="#fde047" />
-        <circle cx="302" cy="92" r="6" fill="#22c55e" />
+        {/* Realistic App Preview Stage */}
+        <div
+          style={{
+            marginTop: '18px',
+            borderRadius: '24px',
+            background: 'linear-gradient(180deg, rgba(19, 28, 46, 0.92) 0%, rgba(10, 15, 26, 0.96) 100%)',
+            border: '1px solid rgba(148, 163, 184, 0.22)',
+            boxShadow: '0 22px 45px rgba(0, 0, 0, 0.45)',
+            padding: '14px'
+          }}
+        >
+          {/* Simulated Map & Route Canvas */}
+          <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden' }}>
+            <svg
+              viewBox="0 0 360 154"
+              width="100%"
+              height="auto"
+              role="img"
+              aria-label="EasyDrive Live Route Preview"
+              style={{ display: 'block' }}
+            >
+              <defs>
+                <linearGradient id="mapBg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#0f172a" />
+                  <stop offset="60%" stopColor="#13262f" />
+                  <stop offset="100%" stopColor="#0b1d18" />
+                </linearGradient>
+                <linearGradient id="roadGlow" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#22c55e" />
+                  <stop offset="100%" stopColor="#f59e0b" />
+                </linearGradient>
+              </defs>
 
-        {/* Highway & lane markings */}
-        <rect x="0" y="110" width="360" height="55" fill="#090d16" />
-        <line x1="16" y1="137" x2="344" y2="137" stroke="#f59e0b" strokeWidth="3" strokeDasharray="16 12" />
+              <rect x="0" y="0" width="360" height="154" fill="url(#mapBg)" />
 
-        {/* Modern Ride Car */}
-        <g transform="translate(105, 86)">
-          <rect x="12" y="18" width="126" height="30" rx="11" fill="url(#carBody)" />
-          <path d="M 34 18 L 50 4 L 102 4 L 118 18 Z" fill="#f8fafc" />
-          <rect x="53" y="7" width="21" height="10" rx="3" fill="#0f172a" />
-          <rect x="79" y="7" width="21" height="10" rx="3" fill="#0f172a" />
-          <circle cx="38" cy="48" r="11" fill="#0f172a" stroke="#e2e8f0" strokeWidth="3" />
-          <circle cx="114" cy="48" r="11" fill="#0f172a" stroke="#e2e8f0" strokeWidth="3" />
-          <circle cx="38" cy="48" r="4" fill="#94a3b8" />
-          <circle cx="114" cy="48" r="4" fill="#94a3b8" />
-        </g>
-      </svg>
+              {/* Subtle city blocks & street grid */}
+              <g opacity="0.22" stroke="#64748b" strokeWidth="1" fill="#1e293b">
+                <rect x="16" y="16" width="76" height="42" rx="6" />
+                <rect x="104" y="16" width="92" height="42" rx="6" />
+                <rect x="208" y="16" width="136" height="42" rx="6" />
+                <rect x="16" y="72" width="110" height="58" rx="6" />
+                <rect x="138" y="72" width="104" height="58" rx="6" />
+                <rect x="254" y="72" width="90" height="58" rx="6" />
+              </g>
+
+              {/* Active Navigation Path */}
+              <path
+                d="M 48 112 C 105 112, 118 46, 180 46 C 242 46, 252 96, 310 56"
+                fill="none"
+                stroke="url(#roadGlow)"
+                strokeWidth="4.5"
+                strokeLinecap="round"
+                strokeDasharray="8 5"
+              />
+
+              {/* Pickup & Destination Pins */}
+              <circle cx="48" cy="112" r="9" fill="rgba(34, 197, 94, 0.25)" />
+              <circle cx="48" cy="112" r="5" fill="#22c55e" />
+
+              <circle cx="310" cy="56" r="9" fill="rgba(245, 158, 11, 0.25)" />
+              <circle cx="310" cy="56" r="5" fill="#f59e0b" />
+
+              {/* Sleek Vehicle Marker */}
+              <g transform="translate(154, 28)">
+                <rect
+                  x="0"
+                  y="0"
+                  width="54"
+                  height="24"
+                  rx="11"
+                  fill="#090d16"
+                  stroke={carFill}
+                  strokeWidth="2"
+                />
+                <path d="M 11 15 L 16 7 L 36 7 L 41 15 Z" fill="#f8fafc" />
+                <rect x="2" y="12" width="50" height="9" rx="4.5" fill={carFill} />
+                <circle cx="13" cy="21" r="3.5" fill="#090d16" />
+                <circle cx="41" cy="21" r="3.5" fill="#090d16" />
+              </g>
+            </svg>
+
+            {/* Floating Route Pill on Map */}
+            <div
+              style={{
+                position: 'absolute',
+                left: '10px',
+                right: '10px',
+                bottom: '10px',
+                background: 'rgba(9, 13, 22, 0.84)',
+                backdropFilter: 'blur(6px)',
+                border: '1px solid rgba(148, 163, 184, 0.24)',
+                borderRadius: '12px',
+                padding: '8px 10px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: '11px'
+              }}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 700, color: '#e2e8f0' }}>
+                <Navigation size={13} color="#4ade80" /> Clifton → Dolmen Mall • 6 km
+              </span>
+              <span style={{ fontWeight: 900, color: '#fde047', fontSize: '13px' }}>
+                Rs. {sampleFare}
+              </span>
+            </div>
+          </div>
+
+          {/* Interactive Tier Selector */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginTop: '10px' }}>
+            {TIERS.map((t) => {
+              const isSelected = t.id === previewTier;
+              return (
+                <button
+                  type="button"
+                  key={t.id}
+                  onClick={() => setPreviewTier(t.id)}
+                  style={{
+                    padding: '8px 6px',
+                    borderRadius: '11px',
+                    border: isSelected ? '1.5px solid #4ade80' : '1px solid rgba(148, 163, 184, 0.18)',
+                    background: isSelected ? 'rgba(22, 163, 74, 0.22)' : 'rgba(15, 23, 42, 0.65)',
+                    color: '#f8fafc',
+                    cursor: 'pointer',
+                    textAlign: 'center'
+                  }}
+                >
+                  <div style={{ fontSize: '11px', fontWeight: 900 }}>{t.label}</div>
+                  <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '1px' }}>Rs.{t.perKm}/km</div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Trust Highlights Strip */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '8px',
+              marginTop: '10px',
+              fontSize: '11px'
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.65)',
+                borderRadius: '10px',
+                padding: '8px 10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: '#dcfce7',
+                fontWeight: 700
+              }}
+            >
+              <KeyRound size={14} color="#4ade80" /> 4-Digit Ride PIN
+            </div>
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.65)',
+                borderRadius: '10px',
+                padding: '8px 10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: '#fef08a',
+                fontWeight: 700
+              }}
+            >
+              <Shield size={14} color="#f59e0b" /> Instant SOS Shield
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Primary Launch CTA */}
+      <div style={{ marginTop: '18px' }}>
+        <button
+          type="button"
+          onClick={onLaunch}
+          style={{
+            width: '100%',
+            padding: '15px 18px',
+            borderRadius: '16px',
+            border: 'none',
+            background: 'linear-gradient(90deg, #16a34a 0%, #22c55e 55%, #f59e0b 100%)',
+            color: '#070d14',
+            fontSize: '16px',
+            fontWeight: 900,
+            letterSpacing: '0.2px',
+            boxShadow: '0 12px 28px rgba(34, 197, 94, 0.32)',
+            cursor: 'pointer'
+          }}
+        >
+          Launch EasyDrive-Pakistan →
+        </button>
+      </div>
     </div>
   );
 }
 
 export default function App() {
   const [screen, setScreen] = useState('promo'); // 'promo' | 'main'
+  const [previewTier, setPreviewTier] = useState('Economy');
   const [portal, setPortal] = useState('driver'); // 'driver' | 'passenger' | 'admin'
   const [sunlight, setSunlight] = useState(false);
 
@@ -300,52 +535,14 @@ export default function App() {
 
   if (screen === 'promo') {
     return (
-      <div
-        style={{
-          maxWidth: '430px',
-          minHeight: '100vh',
-          margin: '0 auto',
-          background: 'linear-gradient(180deg, #16a34a 0%, #065f46 65%, #090d16 100%)',
-          color: '#fff',
-          padding: '24px 20px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          fontFamily: 'system-ui, sans-serif'
+      <RealisticLandingShowcase
+        previewTier={previewTier}
+        setPreviewTier={(tierId) => {
+          setPreviewTier(tierId);
+          setRide((prev) => ({ ...prev, tier: tierId }));
         }}
-      >
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <div style={{ fontSize: '14px', fontWeight: 900, color: '#fde047', letterSpacing: '1px' }}>
-            EASYDRIVE-PAKISTAN
-          </div>
-          <h1 style={{ fontSize: '30px', fontWeight: 900, margin: '10px 0 0', lineHeight: 1.15 }}>
-            AB POORA CASH APKA
-          </h1>
-          <p style={{ fontSize: '13px', color: '#dcfce7', marginTop: '8px' }}>
-            PKR 3,000 / 30 Days • Smart City Rides
-          </p>
-
-          <LandingHeroGraphic />
-        </div>
-
-        <button
-          onClick={() => setScreen('main')}
-          style={{
-            width: '100%',
-            padding: '15px',
-            borderRadius: '14px',
-            border: 'none',
-            background: '#f59e0b',
-            color: '#090d16',
-            fontSize: '16px',
-            fontWeight: 900,
-            cursor: 'pointer',
-            marginTop: '18px'
-          }}
-        >
-          Launch EasyDrive-Pakistan →
-        </button>
-      </div>
+        onLaunch={() => setScreen('main')}
+      />
     );
   }
 
