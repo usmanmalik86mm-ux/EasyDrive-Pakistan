@@ -16,8 +16,7 @@ import {
   ShieldCheck,
   LogIn,
   Check,
-  X,
-  Landmark
+  X
 } from 'lucide-react';
 import MapView from './components/MapView';
 import { supabase } from './lib/supabase';
@@ -308,100 +307,120 @@ export default function App() {
         <div
           style={{
             minHeight: 'calc(100vh - 44px)',
-            background: 'linear-gradient(180deg, #16a34a 0%, #15803d 62%, #064e3b 100%)',
+            background: 'linear-gradient(180deg, #16a34a 0%, #15803d 55%, #064e3b 100%)',
             color: '#fff',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            padding: '22px 18px'
+            padding: '20px 16px'
           }}
         >
-          <div style={{ textAlign: 'center', marginTop: '12px' }}>
+          <div style={{ textAlign: 'center', marginTop: '8px' }}>
             <div
               style={{
-                width: '74px',
-                height: '74px',
-                borderRadius: '22px',
+                width: '72px',
+                height: '72px',
+                borderRadius: '20px',
                 background: '#fff',
                 color: '#15803d',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                margin: '0 auto 12px',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.18)'
+                margin: '0 auto 10px',
+                boxShadow: '0 10px 24px rgba(0,0,0,0.22)'
               }}
             >
-              <Car size={38} />
+              <Car size={36} />
             </div>
-            <h1 style={{ margin: 0, fontSize: '26px', fontWeight: 800 }}>EasyDrive-Pakistan</h1>
-            <p style={{ margin: '6px 0 0', fontSize: '15px', fontWeight: 500 }}>Apke Safar Main Humsafar</p>
+            <h1 style={{ margin: 0, fontSize: '25px', fontWeight: 800 }}>EasyDrive-Pakistan</h1>
+            <p style={{ margin: '4px 0 0', fontSize: '14px', fontWeight: 500, opacity: 0.95 }}>
+              Apke Safar Main Humsafar
+            </p>
 
-            {/* Mazar-e-Quaid & Faisal Mosque Showcase */}
+            {/* Matching Green-Themed Artistic Landmarks: Mazar-e-Quaid & Faisal Mosque */}
             <div
               style={{
-                marginTop: '18px',
+                marginTop: '16px',
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gap: '10px',
                 textAlign: 'left'
               }}
             >
+              {/* Mazar-e-Quaid Picture Frame */}
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.14)',
-                  backdropFilter: 'blur(6px)',
-                  border: '1px solid rgba(255, 255, 255, 0.28)',
-                  borderRadius: '14px',
-                  padding: '12px'
+                  background: 'rgba(6, 78, 59, 0.55)',
+                  border: '1px solid rgba(187, 247, 208, 0.45)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 10px 22px rgba(0, 0, 0, 0.22)'
                 }}
               >
                 <div
                   style={{
-                    height: '76px',
-                    borderRadius: '10px',
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(220,252,231,0.85) 100%)',
-                    color: '#14532d',
+                    height: '122px',
+                    background: 'linear-gradient(180deg, #14532d 0%, #166534 55%, #dcfce7 100%)',
+                    position: 'relative',
                     display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '8px'
+                    alignItems: 'flex-end',
+                    justifyContent: 'center'
                   }}
                 >
-                  <Landmark size={26} />
-                  <span style={{ fontSize: '10px', fontWeight: 700, marginTop: '4px' }}>MAZAR-E-QUAID</span>
+                  <svg viewBox="0 0 180 120" width="100%" height="100%" style={{ display: 'block' }}>
+                    <circle cx="142" cy="28" r="14" fill="rgba(255,255,255,0.22)" />
+                    <rect x="25" y="96" width="130" height="24" rx="4" fill="#ffffff" />
+                    <rect x="42" y="64" width="96" height="32" fill="#f0fdf4" />
+                    <path d="M52 96 L52 74 Q62 66 72 74 L72 96 Z" fill="#15803d" />
+                    <path d="M80 96 L80 72 Q90 64 100 72 L100 96 Z" fill="#15803d" />
+                    <path d="M108 96 L108 74 Q118 66 128 74 L128 96 Z" fill="#15803d" />
+                    <path d="M56 64 Q90 22 124 64 Z" fill="#ffffff" />
+                    <line x1="90" y1="16" x2="90" y2="32" stroke="#ffffff" strokeWidth="2.5" />
+                  </svg>
                 </div>
-                <div style={{ fontSize: '13px', fontWeight: 800 }}>Mazar-e-Quaid</div>
-                <div style={{ fontSize: '11px', opacity: 0.9 }}>Heritage of Pakistan</div>
+                <div style={{ padding: '9px 10px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#fff' }}>Mazar-e-Quaid</div>
+                  <div style={{ fontSize: '11px', color: '#bbf7d0', marginTop: '2px' }}>Karachi • Heritage</div>
+                </div>
               </div>
 
+              {/* Islamabad Faisal Mosque Picture Frame */}
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.14)',
-                  backdropFilter: 'blur(6px)',
-                  border: '1px solid rgba(255, 255, 255, 0.28)',
-                  borderRadius: '14px',
-                  padding: '12px'
+                  background: 'rgba(6, 78, 59, 0.55)',
+                  border: '1px solid rgba(187, 247, 208, 0.45)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 10px 22px rgba(0, 0, 0, 0.22)'
                 }}
               >
                 <div
                   style={{
-                    height: '76px',
-                    borderRadius: '10px',
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(209,250,229,0.85) 100%)',
-                    color: '#065f46',
+                    height: '122px',
+                    background: 'linear-gradient(180deg, #065f46 0%, #047857 55%, #d1fae5 100%)',
+                    position: 'relative',
                     display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '8px'
+                    alignItems: 'flex-end',
+                    justifyContent: 'center'
                   }}
                 >
-                  <Landmark size={26} />
-                  <span style={{ fontSize: '10px', fontWeight: 700, marginTop: '4px' }}>FAISAL MOSQUE</span>
+                  <svg viewBox="0 0 180 120" width="100%" height="100%" style={{ display: 'block' }}>
+                    <circle cx="38" cy="28" r="14" fill="rgba(255,255,255,0.22)" />
+                    <rect x="20" y="98" width="140" height="22" rx="4" fill="#ffffff" />
+                    {/* Four Minarets */}
+                    <polygon points="34,16 30,98 38,98" fill="#ffffff" />
+                    <polygon points="56,34 53,98 59,98" fill="#ecfdf5" />
+                    <polygon points="124,34 121,98 127,98" fill="#ecfdf5" />
+                    <polygon points="146,16 142,98 150,98" fill="#ffffff" />
+                    {/* Iconic Tent Roof */}
+                    <polygon points="90,34 46,98 134,98" fill="#ffffff" />
+                    <polygon points="90,52 72,98 108,98" fill="#15803d" />
+                  </svg>
                 </div>
-                <div style={{ fontSize: '13px', fontWeight: 800 }}>Islamabad Mosque</div>
-                <div style={{ fontSize: '11px', opacity: 0.9 }}>Faisal Mosque Landmark</div>
+                <div style={{ padding: '9px 10px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#fff' }}>Islamabad Mosque</div>
+                  <div style={{ fontSize: '11px', color: '#a7f3d0', marginTop: '2px' }}>Faisal Mosque</div>
+                </div>
               </div>
             </div>
           </div>
@@ -418,7 +437,8 @@ export default function App() {
               fontSize: '16px',
               fontWeight: 800,
               cursor: 'pointer',
-              marginTop: '18px'
+              marginTop: '16px',
+              boxShadow: '0 8px 18px rgba(0, 0, 0, 0.2)'
             }}
           >
             Get Started →
@@ -662,493 +682,4 @@ export default function App() {
                           flex: 1,
                           padding: '7px',
                           borderRadius: '9px',
-                          border: active ? '2px solid #16a34a' : '1px solid #e5e7eb',
-                          background: active ? '#dcfce7' : '#fff',
-                          fontSize: '12px',
-                          fontWeight: 700,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '4px'
-                        }}
-                      >
-                        <Wallet size={13} color="#15803d" /> {method}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#4b5563', marginTop: '8px' }}>
-                  <span>Fare: <strong>Rs. {activeFareObj.fare}</strong></span>
-                  <span>2% Platform Fee: <strong>Rs. {platformFee}</strong></span>
-                </div>
-
-                <div
-                  style={{
-                    background: '#f8fafc',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '10px',
-                    padding: '9px 11px',
-                    marginTop: '9px',
-                    fontSize: '12px',
-                    color: '#374151'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, marginBottom: '4px' }}>
-                    <span>Ride Details ({activeFareObj.label})</span>
-                    <span style={{ color: '#15803d' }}>ETA: {activeFareObj.eta}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#4b5563' }}>
-                    <span>Est. Trip: <strong>{activeFareObj.estTime}</strong></span>
-                    <span>Payment: <strong>{paymentMethod}</strong></span>
-                  </div>
-                  <div style={{ marginTop: '4px', color: '#6b7280', fontSize: '11px' }}>
-                    {pickup || 'Pickup'} → {dropoff || 'Dropoff'}
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    width: '100%',
-                    marginTop: '9px',
-                    padding: '13px',
-                    borderRadius: '11px',
-                    border: 'none',
-                    background: '#16a34a',
-                    color: '#fff',
-                    fontSize: '15px',
-                    fontWeight: 800,
-                    cursor: 'pointer'
-                  }}
-                >
-                  {loading ? 'Requesting...' : 'Request Ride →'}
-                </button>
-              </form>
-            </div>
-          )}
-
-          {tab === 'activity' && (
-            <div style={{ padding: '12px' }}>
-              <h3 style={{ margin: '0 0 10px', fontSize: '15px' }}>Ride Activity</h3>
-              {ridesHistory.length === 0 ? (
-                <p style={{ fontSize: '13px', color: '#6b7280' }}>No rides yet.</p>
-              ) : (
-                ridesHistory.map((r) => (
-                  <div
-                    key={r.id}
-                    style={{
-                      background: '#fff',
-                      borderRadius: '10px',
-                      padding: '10px',
-                      marginBottom: '8px',
-                      border: '1px solid #e5e7eb',
-                      fontSize: '12px'
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
-                      <span>{r.ride_type || 'Economy'} • Rs. {r.fare}</span>
-                      <span style={{ color: '#15803d' }}>{r.status}</span>
-                    </div>
-                    <div style={{ marginTop: '4px', color: '#374151' }}>
-                      {r.pickup_address} → {r.dropoff_address}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-
-          {tab === 'offers' && (
-            <div style={{ padding: '12px' }}>
-              <div style={{ background: '#fff', borderRadius: '12px', padding: '14px', border: '1px solid #dcfce7' }}>
-                <h3 style={{ margin: '0 0 8px', color: '#15803d', fontSize: '15px' }}>EasyDrive Rates & Plans</h3>
-                <p style={{ fontSize: '13px', margin: '0 0 6px' }}>• Economy: Rs. 320 | Business: Rs. 520</p>
-                <p style={{ fontSize: '13px', margin: '0 0 6px' }}>• Driver Monthly Subscription: PKR 3,000 (JazzCash / Easypaisa)</p>
-                <p style={{ fontSize: '13px', margin: 0 }}>• Platform Commission: 2% per ride</p>
-              </div>
-            </div>
-          )}
-
-          {tab === 'profile' && (
-            <div style={{ padding: '12px' }}>
-              <div style={{ background: '#fff', borderRadius: '12px', padding: '14px', border: '1px solid #e5e7eb' }}>
-                <h3 style={{ margin: '0 0 10px', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <LogIn size={16} color="#16a34a" /> Passenger Login
-                </h3>
-                <input
-                  value={passengerAuth.name}
-                  onChange={(e) => setPassengerAuth({ ...passengerAuth, name: e.target.value })}
-                  placeholder="Full Name"
-                  style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #d1d5db', marginBottom: '8px', fontSize: '13px' }}
-                />
-                <input
-                  value={passengerAuth.phone}
-                  onChange={(e) => setPassengerAuth({ ...passengerAuth, phone: e.target.value })}
-                  placeholder="Mobile Number (03XX-...)"
-                  style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #d1d5db', marginBottom: '10px', fontSize: '13px' }}
-                />
-                <button
-                  onClick={() => {
-                    setPassengerAuth({ ...passengerAuth, loggedIn: true });
-                    setNotice(`Logged in as ${passengerAuth.name}`);
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    background: '#16a34a',
-                    color: '#fff',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  {passengerAuth.loggedIn ? 'Update Passenger Session' : 'Login as Passenger'}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Bottom Navigation */}
-          <div
-            style={{
-              position: 'fixed',
-              bottom: 0,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '100%',
-              maxWidth: '430px',
-              background: '#fff',
-              borderTop: '1px solid #e5e7eb',
-              display: 'flex',
-              justifyContent: 'space-around',
-              padding: '7px 0'
-            }}
-          >
-            {[
-              { id: 'home', label: 'Home', Icon: Home },
-              { id: 'activity', label: 'Activity', Icon: Clock },
-              { id: 'offers', label: 'Offers', Icon: Tag },
-              { id: 'profile', label: 'Profile', Icon: User }
-            ].map(({ id, label, Icon }) => {
-              const active = tab === id;
-              return (
-                <button
-                  key={id}
-                  onClick={() => setTab(id)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: active ? '#16a34a' : '#6b7280',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '2px',
-                    fontSize: '11px',
-                    fontWeight: active ? 700 : 500,
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Icon size={17} />
-                  <span>{label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
-
-      {/* ==================== 2. DRIVER PORTAL ==================== */}
-      {portal === 'driver' && (
-        <div style={{ padding: '12px' }}>
-          <div style={{ background: '#fff', borderRadius: '12px', padding: '14px', border: '1px solid #e5e7eb', marginBottom: '12px' }}>
-            <h3 style={{ margin: '0 0 10px', fontSize: '15px', color: '#15803d' }}>Driver Login & Vehicle</h3>
-            <input
-              value={driverAuth.name}
-              onChange={(e) => setDriverAuth({ ...driverAuth, name: e.target.value })}
-              placeholder="Driver Name"
-              style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #d1d5db', marginBottom: '8px', fontSize: '13px' }}
-            />
-            <input
-              value={driverAuth.phone}
-              onChange={(e) => setDriverAuth({ ...driverAuth, phone: e.target.value })}
-              placeholder="Driver Phone"
-              style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #d1d5db', marginBottom: '8px', fontSize: '13px' }}
-            />
-            <input
-              value={driverAuth.vehicle}
-              onChange={(e) => setDriverAuth({ ...driverAuth, vehicle: e.target.value })}
-              placeholder="Vehicle & Plate (e.g. Toyota Corolla • BKU-7431)"
-              style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #d1d5db', marginBottom: '10px', fontSize: '13px' }}
-            />
-            <button
-              onClick={() => {
-                setDriverAuth({ ...driverAuth, loggedIn: true });
-                setNotice(`Driver ${driverAuth.name} online.`);
-              }}
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '8px',
-                border: 'none',
-                background: '#16a34a',
-                color: '#fff',
-                fontWeight: 700,
-                cursor: 'pointer'
-              }}
-            >
-              {driverAuth.loggedIn ? 'Driver Online (Saved)' : 'Driver Login / Go Online'}
-            </button>
-          </div>
-
-          {/* Monthly Subscription PKR 3,000 (JazzCash / Easypaisa) */}
-          <form
-            onSubmit={handleSubmitSubscription}
-            style={{ background: '#fff', borderRadius: '12px', padding: '14px', border: '1px solid #dcfce7', marginBottom: '12px' }}
-          >
-            <h3 style={{ margin: '0 0 6px', fontSize: '15px', color: '#15803d' }}>
-              Monthly Subscription: PKR 3,000
-            </h3>
-            <p style={{ margin: '0 0 10px', fontSize: '12px', color: '#4b5563' }}>
-              Send PKR 3,000 via JazzCash or Easypaisa and enter Transaction ID:
-            </p>
-
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-              {['JazzCash', 'Easypaisa'].map((m) => (
-                <button
-                  type="button"
-                  key={m}
-                  onClick={() => setSubMethod(m)}
-                  style={{
-                    flex: 1,
-                    padding: '8px',
-                    borderRadius: '8px',
-                    border: subMethod === m ? '2px solid #16a34a' : '1px solid #d1d5db',
-                    background: subMethod === m ? '#dcfce7' : '#fff',
-                    fontWeight: 700,
-                    fontSize: '12px'
-                  }}
-                >
-                  {m}
-                </button>
-              ))}
-            </div>
-
-            <input
-              value={txId}
-              onChange={(e) => setTxId(e.target.value)}
-              placeholder="Enter JazzCash / Easypaisa TID"
-              style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #d1d5db', marginBottom: '10px', fontSize: '13px' }}
-            />
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '8px',
-                border: 'none',
-                background: '#0f172a',
-                color: '#fff',
-                fontWeight: 700,
-                cursor: 'pointer'
-              }}
-            >
-              Submit PKR 3,000 Receipt
-            </button>
-          </form>
-
-          {/* Ride Requests for Driver */}
-          <div style={{ background: '#fff', borderRadius: '12px', padding: '14px', border: '1px solid #e5e7eb' }}>
-            <h3 style={{ margin: '0 0 10px', fontSize: '15px' }}>Available / Active Rides</h3>
-            {ridesHistory.filter((r) => r.status === 'searching' || r.status === 'accepted').length === 0 ? (
-              <p style={{ fontSize: '12px', color: '#6b7280' }}>No open ride requests right now.</p>
-            ) : (
-              ridesHistory
-                .filter((r) => r.status === 'searching' || r.status === 'accepted')
-                .map((r) => (
-                  <div
-                    key={r.id}
-                    style={{
-                      padding: '10px',
-                      borderRadius: '10px',
-                      border: '1px solid #e5e7eb',
-                      marginBottom: '8px',
-                      fontSize: '12px'
-                    }}
-                  >
-                    <div style={{ fontWeight: 700 }}>
-                      {r.pickup_address} → {r.dropoff_address} (Rs. {r.fare})
-                    </div>
-                    <div style={{ color: '#6b7280', margin: '4px 0' }}>
-                      Status: <strong>{r.status}</strong> • 2% Fee: Rs. {(Number(r.fare) * 0.02).toFixed(2)}
-                    </div>
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
-                      {r.status === 'searching' && (
-                        <button
-                          onClick={() => handleUpdateRideStatus(r.id, 'accepted')}
-                          style={{ padding: '6px 10px', borderRadius: '7px', border: 'none', background: '#16a34a', color: '#fff', fontWeight: 700 }}
-                        >
-                          Accept Ride
-                        </button>
-                      )}
-                      {r.status === 'accepted' && (
-                        <button
-                          onClick={() => handleUpdateRideStatus(r.id, 'completed')}
-                          style={{ padding: '6px 10px', borderRadius: '7px', border: 'none', background: '#0f172a', color: '#fff', fontWeight: 700 }}
-                        >
-                          Complete Ride
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ==================== 3. SUPER ADMIN CONTROL PAGE ==================== */}
-      {portal === 'admin' && (
-        <div style={{ padding: '12px' }}>
-          {!adminUnlocked ? (
-            <div style={{ background: '#fff', borderRadius: '12px', padding: '16px', border: '1px solid #e5e7eb' }}>
-              <h3 style={{ margin: '0 0 8px', fontSize: '16px', color: '#0f172a' }}>Super Admin Login</h3>
-              <p style={{ margin: '0 0 10px', fontSize: '12px', color: '#6b7280' }}>
-                Enter Super Admin PIN (Default demo PIN: <strong>1234</strong>):
-              </p>
-              <input
-                type="password"
-                value={adminPin}
-                onChange={(e) => setAdminPin(e.target.value)}
-                placeholder="Enter Admin PIN"
-                style={{ width: '100%', padding: '9px', borderRadius: '8px', border: '1px solid #d1d5db', marginBottom: '10px', fontSize: '13px' }}
-              />
-              <button
-                onClick={() => {
-                  if (adminPin === '1234') {
-                    setAdminUnlocked(true);
-                    setNotice('Super Admin unlocked.');
-                  } else {
-                    setNotice('Invalid PIN. Use 1234 for demo.');
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: '#0f172a',
-                  color: '#fff',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}
-              >
-                Unlock Super Admin Panel
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* Admin KPIs */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
-                <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                  <div style={{ fontSize: '11px', color: '#6b7280' }}>Total Rides</div>
-                  <div style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a' }}>{ridesHistory.length}</div>
-                </div>
-                <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                  <div style={{ fontSize: '11px', color: '#6b7280' }}>2% Ride Commission</div>
-                  <div style={{ fontSize: '20px', fontWeight: 800, color: '#15803d' }}>Rs. {totalCommission}</div>
-                </div>
-                <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                  <div style={{ fontSize: '11px', color: '#6b7280' }}>Active PKR 3,000 Plans</div>
-                  <div style={{ fontSize: '20px', fontWeight: 800, color: '#15803d' }}>{approvedSubsCount}</div>
-                </div>
-                <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                  <div style={{ fontSize: '11px', color: '#6b7280' }}>Sub Revenue (Est.)</div>
-                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>
-                    PKR {(approvedSubsCount * 3000).toLocaleString()}
-                  </div>
-                </div>
-              </div>
-
-              {/* Driver Subscription Approvals */}
-              <div style={{ background: '#fff', borderRadius: '12px', padding: '12px', border: '1px solid #e5e7eb', marginBottom: '12px' }}>
-                <h3 style={{ margin: '0 0 10px', fontSize: '14px' }}>Driver Subscriptions (PKR 3,000)</h3>
-                {subscriptions.length === 0 ? (
-                  <p style={{ fontSize: '12px', color: '#6b7280' }}>No subscription requests yet.</p>
-                ) : (
-                  subscriptions.map((s) => (
-                    <div
-                      key={s.id}
-                      style={{
-                        padding: '9px',
-                        borderRadius: '9px',
-                        border: '1px solid #e5e7eb',
-                        marginBottom: '8px',
-                        fontSize: '12px'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
-                        <span>{s.payment_method} • PKR {s.amount}</span>
-                        <span>{s.status}</span>
-                      </div>
-                      <div style={{ color: '#4b5563', marginTop: '3px' }}>TID: {s.transaction_id}</div>
-                      <div style={{ display: 'flex', gap: '8px', marginTop: '7px' }}>
-                        <button
-                          onClick={() => handleSubscriptionAction(s.id, 'approved')}
-                          style={{
-                            padding: '5px 10px',
-                            borderRadius: '7px',
-                            border: 'none',
-                            background: '#16a34a',
-                            color: '#fff',
-                            fontWeight: 700,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
-                        >
-                          <Check size={13} /> Approve
-                        </button>
-                        <button
-                          onClick={() => handleSubscriptionAction(s.id, 'rejected')}
-                          style={{
-                            padding: '5px 10px',
-                            borderRadius: '7px',
-                            border: 'none',
-                            background: '#dc2626',
-                            color: '#fff',
-                            fontWeight: 700,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
-                        >
-                          <X size={13} /> Reject
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* All Rides Log */}
-              <div style={{ background: '#fff', borderRadius: '12px', padding: '12px', border: '1px solid #e5e7eb' }}>
-                <h3 style={{ margin: '0 0 8px', fontSize: '14px' }}>All Rides & 2% Fee Log</h3>
-                {ridesHistory.map((r) => (
-                  <div key={r.id} style={{ padding: '7px 0', borderBottom: '1px solid #f1f5f9', fontSize: '12px' }}>
-                    <strong>Rs. {r.fare}</strong> (2% Fee: Rs. {(Number(r.fare) * 0.02).toFixed(2)}) — <span>{r.status}</span>
-                    <div style={{ color: '#6b7280' }}>{r.pickup_address} → {r.dropoff_address}</div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+                          border
