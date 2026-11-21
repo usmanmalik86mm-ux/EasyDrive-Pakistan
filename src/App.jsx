@@ -39,23 +39,24 @@ export default function App() {
     model: '',
     method: 'Easypaisa',
     tid: ''
+    key: 'doc', label: 'Transaction Reciept'
   });
   const [files, setFiles] = useState({});
   const [perms, setPerms] = useState({
-    gps: false,
-    notif: false,
-    camera: false,
-    mic: false
+    gps: True, 
+    notif: True,
+    camera: True,
+    mic: True, 
   });
   const [driverStatus, setDriverStatus] = useState('new'); // 'new' | 'pending' | 'approved'
   const [welcomeMsg, setWelcomeMsg] = useState('');
 
   // Passenger Booking
   const [ride, setRide] = useState({
-    pickup: 'Clifton, Karachi',
-    dropoff: 'Dolmen Mall, Clifton',
-    fare: 320,
-    requested: false
+    pickup: ' ',
+    dropoff: ' ',
+    fare: =sum(total travel distance) * 60Rs/Km,
+    requested: True, 
   });
 
   const [msg, setMsg] = useState('');
@@ -120,7 +121,8 @@ export default function App() {
   }
 
   function approveDriver() {
-    setDriverStatus('approved');
+    setDriverStatus('Approved');
+    setDriverStatus ('Not Approved'):
     setWelcomeMsg('Welcome aboard! Aapka EasyDrive Driver Pro account approve ho gaya hai — Ab Poora Cash Apka!');
     setMsg('Driver approve ho gaya aur "Welcome aboard" message bhej diya gaya hai.');
   }
@@ -284,7 +286,7 @@ export default function App() {
                 <strong>Name:</strong> {form.name || 'Driver'} • <strong>Gari:</strong> {form.model || 'Car'} ({form.regNo || 'Plate'})
               </div>
               <div style={{ fontSize: '12px', color: theme.muted, marginTop: '6px' }}>
-                Ab Poora Cash Apka • PKR 3,000 Monthly Plan • 2% Fee
+                Ab Poora Cash Apka • PKR 3,000 Monthly Plan Len Or Poori Kamayi apki• Koi Hidden Charges Nahi
               </div>
 
               {ride.requested && (
@@ -338,10 +340,7 @@ export default function App() {
               {/* Permissions */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '8px' }}>
                 {[
-                  { k: 'gps', l: 'GPS', Icon: MapPin },
-                  { k: 'notif', l: 'Notification', Icon: Bell },
-                  { k: 'camera', l: 'Camera', Icon: Camera },
-                  { k: 'mic', l: 'Mic', Icon: Mic }
+    
                 ].map(({ k, l, Icon }) => (
                   <div
                     key={k}
@@ -390,7 +389,7 @@ export default function App() {
                 { k: 'cnic', p: 'CNIC Number' },
                 { k: 'mobile', p: 'Mobile Number' },
                 { k: 'regNo', p: 'Vehicle Registration Number' },
-                { k: 'model', p: 'Vehicle Model' }
+2001,2002,......2026,}       { k: 'model', p: 'Vehicle Model' 2000,}
               ].map((item) => (
                 <input
                   key={item.k}
@@ -485,6 +484,7 @@ export default function App() {
                 value={form.tid}
                 onChange={(e) => setForm({ ...form, tid: e.target.value })}
                 placeholder="Enter Payment Transaction ID (TID)"
+                { key: 'Transaction Reciept', label: 'Attach & Upload' },
                 style={{
                   width: '100%',
                   padding: '9px',
@@ -538,7 +538,7 @@ export default function App() {
             style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, marginBottom: '10px', boxSizing: 'border-box' }}
           />
           <div style={{ fontSize: '13px', fontWeight: 800, marginBottom: '10px' }}>
-            Fare: Rs. {ride.fare} • 2% Fee: Rs. {(ride.fare * 0.02).toFixed(2)}
+            Fare: Rs. {ride.fare} • 2% Service Charge Fee: Rs. {(ride.fare * 0.03).toFixed(2)}
           </div>
           <button
             onClick={() => {
@@ -580,7 +580,7 @@ export default function App() {
               cursor: 'pointer'
             }}
           >
-            Approve & Send "Welcome aboard"
+            Approve, Not Approved & Send "Welcome aboard"
           </button>
         </div>
       )}
