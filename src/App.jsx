@@ -1,318 +1,728 @@
-import React, { useState } from 'react';
-import MapComponent from './MapComponent';
+import React, { useEffect, useState } from 'react';
+import {
+  Car,
+  MapPin,
+  Navigation,
+  Phone,
+  MessageCircle,
+  Share2,
+  XCircle,
+  Home,
+  Clock,
+  Tag,
+  User,
+  CheckCircle2,
+  Wallet
+} from 'lucide-react';
+import MapView from './components/MapView';
+import { supabase } from './lib/supabase';
+
+const FARE_OPTIONS = [
+  { id: 'Economy', label: 'Economy', seats: '4 seats', fare: 320 },
+  { id: 'Business', label: 'Business', seats: '4 seats', fare: 520 }
+];
+
+const PAYMENT_METHODS = ['Cash', 'JazzCash', 'Easypaisa'];
 
 export default function App() {
-  const [appMode, setAppMode] = useState('select'); // 'select', 'passenger', 'driver', 'admin'
-  
-  // Passenger states
-  const [pickup, setPickup] = useState('Dolmen Mall Clifton, Karachi');
-  const [dropoff, setDropoff] = useState('Jinnah International Airport');
-  const [selectedCategory, setselectedCategory] = useState('Comfy (AC)');
-  const [rideRequested, setRideRequested] = useState(false);
+  const [screen, setScreen] = useState('welcome'); // 'welcome' | 'booking' | 'active_ride'
+  const [tab, setTab] = useState('home'); // 'home' | 'activity' | 'offers' | 'profile'
 
-  // Driver states
-  const [driverOnline, setDriverOnline] = useState(true);
-  const [driverBalance] = useState('Rs. 3,450');
+  const [pickup, setPickup] = useState('Clifton, Karachi');
+  const [dropoff, setDropoff] = useState('Dolmen Mall, Clifton');
+  const [selectedType, setSelectedType] = useState('Economy');
+  const [paymentMethod, setPaymentMethod] = useState('JazzCash');
 
-  // Admin Excel-style mock datasets
-  const [adminTab, setAdminTab] = useState('driversExcel');
-  const [driversData] = useState([
-    { id: 'DRV-101', name: 'Ahmed Raza', phone: '0300-1234567', vehicle: 'Toyota Corolla (ABC-123)', category: 'Comfy (AC)', rating: '4.8', status: 'Approved', subscription: 'Paid (Rs. 3000)' },
-    { id: 'DRV-102', name: 'Bilal Hussain', phone: '0321-7654321', vehicle: 'Suzuki Alto (XYZ-789)', category: 'Economy', rating: '4.9', status: 'Approved', subscription: 'Paid (Rs. 3000)' },
-    { id: 'DRV-103', name: 'Tariq Mehmood', phone: '0333-9876543', vehicle: 'Honda Civic (LE-456)', category: 'Executive', rating: '4.7', status: 'Pending Review', subscription: 'Unpaid' }
-  ]);
+  const [currentRide, setCurrentRide] = useState(null);
+  const [ridesHistory, setRidesHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [notice, setNotice] = useState('');
 
-  const [inProgressRides] = useState([
-    {
-      id: 'ED-9041',
-      passenger: 'Ali Khan (0300-5551122)',
-      driverName: 'Ahmed Raza',
-      driverPhone: '0300-1234567',
-      vehicleReg: 'ABC-123',
-      category: 'Comfy (AC)',
-      pickup: 'Dolmen Mall Clifton',
-      dropoff: 'Airport Terminal 1',
-      travelled: '4.5 km',
-      remaining: '8.2 km',
-      eta: '14 mins',
-      fare: 'Rs. 960',
-      startTime: 'Today, 05:15 PM'
+  const activeFareObj = FARE_OPTIONS.find((f) => f.id === selectedType) || FARE_OPTIONS[0];
+  const platformFee = (activeFareObj.fare * 0.02).toFixed(2);
+
+  useEffect(() => {
+    fetchRides();
+  }, []);
+
+  async function fetchRides() {
+    const { data, error } = await supabase
+      .from('rides')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (!error && data) {
+      setRidesHistory(data);
     }
-  ]);
+  }
 
-  const [taxLedger] = useState([
-    { driver: 'Ahmed Raza', rides: 20, fareTotal: 'Rs. 20,000', taxDue: 'Rs. 400', status: 'Pending' },
-    { driver: 'Bilal Hussain', rides: 14, fareTotal: 'Rs. 14,000', taxDue: 'Rs. 280', status: 'Accumulating' }
-  ]);
+  async function handleRequestRide(e) {
+    e.preventDefault();
+    setLoading(true);
+    setNotice('');
 
-  // Portal Selector Screen if 'select'
-  if (appMode === 'select') {
+    // Demo passenger UUID for quick testing without login blocker
+    const demoPassengerId = '00000000-0000-0000-0000-000000000001';
+
+    const { data, error } = await supabase
+      .from('rides')
+      .insert([
+        {
+          passenger_id: demoPassengerId,
+          pickup_address: pickup,
+          dropoff_address: dropoff,
+          fare: activeFareObj.fare,
+          ride_type: activeFareObj.id,
+          payment_method: paymentMethod,
+          driver_name: 'Ali Raza',
+          driver_rating: 4.9,
+          vehicle_info: 'Toyota Corolla • BKU-7431',
+          eta_minutes: 2,
+          status: 'accepted'
+        }
+      ])
+      .select()
+      .single();
+
+    setLoading(false);
+
+    if (error) {
+      setNotice(`Ride request error: ${error.message}`);
+      return;
+    }
+
+    setCurrentRide(data);
+    setScreen('active_ride');
+    fetchRides();
+  }
+
+  async function handleCancelRide() {
+    if (!currentRide) return;
+    await supabase
+      .from('rides')
+      .update({ status: 'cancelled' })
+      .eq('id', currentRide.id);
+
+    setCurrentRide(null);
+    setScreen('booking');
+    setNotice('Ride cancelled.');
+    fetchRides();
+  }
+
+  async function handleCompleteRide() {
+    if (!currentRide) return;
+    await supabase
+      .from('rides')
+      .update({ status: 'completed' })
+      .eq('id', currentRide.id);
+
+    setCurrentRide(null);
+    setScreen('booking');
+    setTab('activity');
+    setNotice('Ride completed! 2% platform fee recorded.');
+    fetchRides();
+  }
+
+  function handleShareRide() {
+    const text = `EasyDrive-Pakistan Live Ride: ${pickup} to ${dropoff} (Rs. ${activeFareObj.fare}).`;
+    if (navigator.share) {
+      navigator.share({ title: 'EasyDrive-Pakistan', text }).catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setNotice('Ride details copied to clipboard!');
+    }
+  }
+
+  // 1. WELCOME SCREEN (Matches left phone in graphic)
+  if (screen === 'welcome') {
     return (
-      <div style={{ fontFamily: 'sans-serif', backgroundColor: '#0f172a', minHeight: '100vh', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'white' }}>
-        <h1 style={{ marginBottom: '8px', fontSize: '24px', textAlign: 'center' }}>EasyDrive Pakistan</h1>
-        <p style={{ color: '#94a3b8', marginBottom: '30px', fontSize: '14px', textAlign: 'center' }}>Select portal to launch application interface</p>
-        
-        <div style={{ width: '100%', maxWidth: '360px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          <button 
-            onClick={() => setAppMode('passenger')}
-            style={{ padding: '16px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', boxShadow: '0 4px 12px rgba(37,99,235,0.4)' }}>
-            🚪🚗 Launch Passenger App (Blue)
+      <div
+        style={{
+          maxWidth: '430px',
+          minHeight: '100vh',
+          margin: '0 auto',
+          background: 'linear-gradient(180deg, #16a34a 0%, #15803d 65%, #f0fdf4 100%)',
+          color: '#fff',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '28px 20px',
+          fontFamily: 'system-ui, -apple-system, sans-serif'
+        }}
+      >
+        <div style={{ textAlign: 'center', marginTop: '36px' }}>
+          <div
+            style={{
+              width: '84px',
+              height: '84px',
+              borderRadius: '24px',
+              background: '#fff',
+              color: '#15803d',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 18px',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.18)'
+            }}
+          >
+            <Car size={42} />
+          </div>
+          <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 800 }}>EasyDrive-Pakistan</h1>
+          <p style={{ margin: '8px 0 0', fontSize: '16px', opacity: 0.95 }}>
+            Apke Safar Main Humsafar
+          </p>
+          <span
+            style={{
+              display: 'inline-block',
+              marginTop: '14px',
+              padding: '6px 14px',
+              borderRadius: '999px',
+              background: 'rgba(255,255,255,0.2)',
+              fontSize: '13px',
+              fontWeight: 600
+            }}
+          >
+            Karachi • Safe & Affordable Rides
+          </span>
+        </div>
+
+        <button
+          onClick={() => setScreen('booking')}
+          style={{
+            width: '100%',
+            padding: '15px',
+            borderRadius: '14px',
+            border: 'none',
+            background: '#16a34a',
+            color: '#fff',
+            fontSize: '17px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            boxShadow: '0 8px 20px rgba(21,128,61,0.35)',
+            outline: '2px solid #fff'
+          }}
+        >
+          Get Started →
+        </button>
+      </div>
+    );
+  }
+
+  // 2. ACTIVE RIDE SCREEN (Matches right phone in graphic)
+  if (screen === 'active_ride' && currentRide) {
+    return (
+      <div
+        style={{
+          maxWidth: '430px',
+          minHeight: '100vh',
+          margin: '0 auto',
+          background: '#f8fafc',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          paddingBottom: '24px'
+        }}
+      >
+        <div style={{ background: '#15803d', color: '#fff', padding: '16px 18px' }}>
+          <div style={{ fontSize: '18px', fontWeight: 700 }}>Your Ride is on the Way</div>
+          <div style={{ fontSize: '13px', opacity: 0.9 }}>
+            Driver arriving in {currentRide.eta_minutes || 2} min (500 m)
+          </div>
+        </div>
+
+        <div style={{ padding: '14px' }}>
+          <MapView height="210px" />
+
+          {/* Driver Card */}
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: '14px',
+              padding: '14px',
+              marginTop: '12px',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}
+          >
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '16px', color: '#111827' }}>
+                {currentRide.driver_name || 'Ali Raza'}
+              </div>
+              <div style={{ fontSize: '13px', color: '#15803d', fontWeight: 600 }}>
+                ★ {currentRide.driver_rating || 4.9}
+              </div>
+              <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
+                {currentRide.vehicle_info || 'Toyota Corolla • BKU-7431'}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => setNotice('Calling driver...')}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  border: '1px solid #dcfce7',
+                  background: '#f0fdf4',
+                  color: '#15803d',
+                  cursor: 'pointer'
+                }}
+              >
+                <Phone size={18} />
+              </button>
+              <button
+                onClick={() => setNotice('Chat opened with driver.')}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  border: '1px solid #dcfce7',
+                  background: '#f0fdf4',
+                  color: '#15803d',
+                  cursor: 'pointer'
+                }}
+              >
+                <MessageCircle size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* Trip Summary */}
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: '14px',
+              padding: '14px',
+              marginTop: '12px',
+              fontSize: '13px',
+              color: '#374151',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.06)'
+            }}
+          >
+            <div><strong>Pickup:</strong> {currentRide.pickup_address}</div>
+            <div style={{ marginTop: '4px' }}><strong>Dropoff:</strong> {currentRide.dropoff_address}</div>
+            <div style={{ marginTop: '6px', display: 'flex', justifyContent: 'space-between' }}>
+              <span><strong>Fare:</strong> Rs. {currentRide.fare} ({currentRide.payment_method})</span>
+              <span style={{ color: '#15803d', fontWeight: 600 }}>
+                2% Fee: Rs. {(Number(currentRide.fare) * 0.02).toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', gap: '10px', marginTop: '14px' }}>
+            <button
+              onClick={handleShareRide}
+              style={{
+                flex: 1,
+                padding: '12px',
+                borderRadius: '12px',
+                border: '1px solid #16a34a',
+                background: '#fff',
+                color: '#15803d',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                cursor: 'pointer'
+              }}
+            >
+              <Share2 size={16} /> Share Ride
+            </button>
+            <button
+              onClick={handleCancelRide}
+              style={{
+                flex: 1,
+                padding: '12px',
+                borderRadius: '12px',
+                border: 'none',
+                background: '#dc2626',
+                color: '#fff',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                cursor: 'pointer'
+              }}
+            >
+              <XCircle size={16} /> Cancel Ride
+            </button>
+          </div>
+
+          <button
+            onClick={handleCompleteRide}
+            style={{
+              width: '100%',
+              marginTop: '10px',
+              padding: '13px',
+              borderRadius: '12px',
+              border: 'none',
+              background: '#16a34a',
+              color: '#fff',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              cursor: 'pointer'
+            }}
+          >
+            <CheckCircle2 size={17} /> Complete Trip
           </button>
 
-          <button 
-            onClick={() => setAppMode('driver')}
-            style={{ padding: '16px', backgroundColor: '#16a34a', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', boxShadow: '0 4px 12px rgba(22,163,74,0.4)' }}>
-            💵👨‍✈️ Launch Driver App (Green)
-          </button>
-
-          <button 
-            onClick={() => setAppMode('admin')}
-            style={{ padding: '16px', backgroundColor: '#475569', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-            🔒📊 Launch Admin Dashboard
-          </button>
+          {notice && (
+            <div style={{ marginTop: '10px', fontSize: '13px', color: '#15803d', textAlign: 'center' }}>
+              {notice}
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
+  // 3. MAIN BOOKING + TABS SCREEN (Matches center phone in graphic)
   return (
-    <div style={{ fontFamily: 'sans-serif', backgroundColor: '#f1f5f9', minHeight: '100vh', padding: '10px', maxWidth: '500px', margin: '0 auto' }}>
-      
-      {/* Universal Top Switch Bar Back */}
-      <div style={{ backgroundColor: '#1e293b', color: 'white', padding: '10px 14px', borderRadius: '8px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '13px', fontWeight: 'bold' }}>
-          {appMode === 'passenger' && '🔵 Passenger Portal'}
-          {appMode === 'driver' && '🟢 Driver Portal'}
-          {appMode === 'admin' && '🔒 Admin Control Hub'}
-        </span>
-        <button 
-          onClick={() => setAppMode('select')}
-          style={{ backgroundColor: '#334155', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '4px', fontSize: '11px', cursor: 'pointer' }}>
-          Switch Portal
+    <div
+      style={{
+        maxWidth: '430px',
+        minHeight: '100vh',
+        margin: '0 auto',
+        background: '#f8fafc',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        paddingBottom: '76px'
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          background: '#fff',
+          padding: '12px 16px',
+          borderBottom: '1px solid #e5e7eb',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Car size={22} color="#16a34a" />
+          <div>
+            <div style={{ fontWeight: 800, fontSize: '15px', color: '#15803d' }}>
+              EasyDrive-Pakistan
+            </div>
+            <div style={{ fontSize: '11px', color: '#6b7280' }}>Apke Safar Main Humsafar</div>
+          </div>
+        </div>
+        <button
+          onClick={() => setScreen('welcome')}
+          style={{
+            border: '1px solid #dcfce7',
+            background: '#f0fdf4',
+            color: '#15803d',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            fontSize: '12px',
+            fontWeight: 600,
+            cursor: 'pointer'
+          }}
+        >
+          Intro
         </button>
       </div>
 
-      {/* ==========================================
-          1. PASSENGER APP INTERFACE (BLUE THEME)
-         ========================================== */}
-      {appMode === 'passenger' && (
-        <div style={{ backgroundColor: 'white', borderRadius: '10px', borderTop: '5px solid #2563eb', padding: '14px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-          <div style={{ backgroundColor: '#eff6ff', padding: '12px', borderRadius: '8px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <h3 style={{ margin: '0 0 2px 0', color: '#1e40af', fontSize: '16px' }}>EasyDrive Rider</h3>
-              <p style={{ margin: 0, fontSize: '11px', color: '#3b82f6' }}>Tap to request reliable Karachi transport</p>
+      {notice && (
+        <div
+          style={{
+            margin: '10px 14px 0',
+            padding: '10px 12px',
+            borderRadius: '10px',
+            background: '#dcfce7',
+            color: '#14532d',
+            fontSize: '13px',
+            fontWeight: 600
+          }}
+        >
+          {notice}
+        </div>
+      )}
+
+      {tab === 'home' && (
+        <div style={{ padding: '12px 14px' }}>
+          {/* Location Inputs */}
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: '14px',
+              padding: '12px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+              marginBottom: '10px'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <MapPin size={16} color="#16a34a" />
+              <input
+                value={pickup}
+                onChange={(e) => setPickup(e.target.value)}
+                placeholder="Your Location"
+                style={{
+                  flex: 1,
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  padding: '8px 10px',
+                  fontSize: '13px'
+                }}
+              />
             </div>
-            <div style={{ fontSize: '28px', background: '#dbeafe', padding: '6px', borderRadius: '50%' }}>🚪🚗</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Navigation size={16} color="#dc2626" />
+              <input
+                value={dropoff}
+                onChange={(e) => setDropoff(e.target.value)}
+                placeholder="Destination"
+                style={{
+                  flex: 1,
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  padding: '8px 10px',
+                  fontSize: '13px'
+                }}
+              />
+            </div>
           </div>
 
-          <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569' }}>Pickup Location</label>
-          <input 
-            type="text" 
-            value={pickup} 
-            onChange={(e) => setPickup(e.target.value)}
-            style={{ width: '100%', padding: '10px', margin: '4px 0 10px 0', borderRadius: '6px', border: '1px solid #cbd5e1', boxSizing: 'border-box', fontSize: '13px' }} 
-          />
+          {/* Map */}
+          <MapView height="165px" />
 
-          <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569' }}>Drop-off Location</label>
-          <input 
-            type="text" 
-            value={dropoff} 
-            onChange={(e) => setDropoff(e.target.value)}
-            style={{ width: '100%', padding: '10px', margin: '4px 0 12px 0', borderRadius: '6px', border: '1px solid #cbd5e1', boxSizing: 'border-box', fontSize: '13px' }} 
-          />
+          {/* Ride Categories: Economy Rs. 320 / Business Rs. 520 */}
+          <form onSubmit={handleRequestRide} style={{ marginTop: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {FARE_OPTIONS.map((item) => {
+                const active = selectedType === item.id;
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => setSelectedType(item.id)}
+                    style={{
+                      background: active ? '#f0fdf4' : '#fff',
+                      border: active ? '2px solid #16a34a' : '1px solid #e5e7eb',
+                      borderRadius: '12px',
+                      padding: '10px 12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Car size={20} color="#15803d" />
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '14px', color: '#111827' }}>
+                          {item.label}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#6b7280' }}>{item.seats}</div>
+                      </div>
+                    </div>
+                    <div style={{ fontWeight: 800, fontSize: '15px', color: '#15803d' }}>
+                      Rs. {item.fare}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
 
-          <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', display: 'block', marginBottom: '6px' }}>Select Vehicle Category</label>
-          
-          <div onClick={() => setselectedCategory('Economy')} style={{ padding: '10px', marginBottom: '6px', borderRadius: '6px', border: selectedCategory === 'Economy' ? '2px solid #2563eb' : '1px solid #e2e8f0', backgroundColor: selectedCategory === 'Economy' ? '#eff6ff' : 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}>
-            <div><strong style={{ fontSize: '13px' }}>Economy (Non-AC)</strong><div style={{ fontSize: '10px', color: '#64748b' }}>Rs. 50/km + Pickup</div></div>
-            <span style={{ fontWeight: 'bold', color: '#2563eb', fontSize: '13px' }}>Rs. 520</span>
-          </div>
+            {/* Payment Method: Cash / JazzCash / Easypaisa */}
+            <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+              {PAYMENT_METHODS.map((method) => {
+                const isSelected = paymentMethod === method;
+                return (
+                  <button
+                    type="button"
+                    key={method}
+                    onClick={() => setPaymentMethod(method)}
+                    style={{
+                      flex: 1,
+                      padding: '8px 6px',
+                      borderRadius: '10px',
+                      border: isSelected ? '2px solid #16a34a' : '1px solid #e5e7eb',
+                      background: isSelected ? '#dcfce7' : '#fff',
+                      color: '#111827',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Wallet size={13} color="#15803d" /> {method}
+                  </button>
+                );
+              })}
+            </div>
 
-          <div onClick={() => setselectedCategory('Comfy (AC)')} style={{ padding: '10px', marginBottom: '6px', borderRadius: '6px', border: selectedCategory === 'Comfy (AC)' ? '2px solid #2563eb' : '1px solid #e2e8f0', backgroundColor: selectedCategory === 'Comfy (AC)' ? '#eff6ff' : 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}>
-            <div><strong style={{ fontSize: '13px' }}>Comfy (AC Sedan)</strong><div style={{ fontSize: '10px', color: '#64748b' }}>Rs. 70/km + Pickup</div></div>
-            <span style={{ fontWeight: 'bold', color: '#2563eb', fontSize: '13px' }}>Rs. 960</span>
-          </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '12px',
+                color: '#4b5563',
+                marginTop: '8px',
+                padding: '0 4px'
+              }}
+            >
+              <span>Selected: <strong>{activeFareObj.label}</strong></span>
+              <span>Platform Fee (2%): <strong>Rs. {platformFee}</strong></span>
+            </div>
 
-          <div onClick={() => setselectedCategory('Executive')} style={{ padding: '10px', marginBottom: '14px', borderRadius: '6px', border: selectedCategory === 'Executive' ? '2px solid #2563eb' : '1px solid #e2e8f0', backgroundColor: selectedCategory === 'Executive' ? '#eff6ff' : 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}>
-            <div><strong style={{ fontSize: '13px' }}>Executive Class</strong><div style={{ fontSize: '10px', color: '#64748b' }}>Rs. 100/km luxury ride</div></div>
-            <span style={{ fontWeight: 'bold', color: '#2563eb', fontSize: '13px' }}>Rs. 1,350</span>
-          </div>
-
-          {!rideRequested ? (
-            <button 
-              onClick={() => setRideRequested(true)}
-              style={{ width: '100%', backgroundColor: '#2563eb', color: 'white', padding: '12px', borderRadius: '6px', border: 'none', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }}>
-              Confirm & Book {selectedCategory}
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '100%',
+                marginTop: '10px',
+                padding: '14px',
+                borderRadius: '12px',
+                border: 'none',
+                background: '#16a34a',
+                color: '#fff',
+                fontSize: '15px',
+                fontWeight: 800,
+                cursor: 'pointer'
+              }}
+            >
+              {loading ? 'Requesting...' : 'Request Ride →'}
             </button>
+          </form>
+        </div>
+      )}
+
+      {tab === 'activity' && (
+        <div style={{ padding: '14px' }}>
+          <h3 style={{ margin: '0 0 10px', fontSize: '16px' }}>Recent Rides</h3>
+          {ridesHistory.length === 0 ? (
+            <p style={{ fontSize: '13px', color: '#6b7280' }}>No rides recorded yet.</p>
           ) : (
-            <div style={{ textAlign: 'center', padding: '12px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px' }}>
-              <p style={{ color: '#1e40af', fontWeight: 'bold', margin: '0 0 6px 0', fontSize: '13px' }}>Finding nearest driver (3km radius)...</p>
-              <button onClick={() => setRideRequested(false)} style={{ backgroundColor: '#dc2626', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '4px', fontSize: '11px', cursor: 'pointer' }}>Cancel Request</button>
-            </div>
-          )}
-
-          <div style={{ marginTop: '12px' }}>
-            <MapComponent />
-          </div>
-        </div>
-      )}
-
-      {/* ==========================================
-          2. DRIVER APP INTERFACE (GREEN THEME)
-         ========================================== */}
-      {appMode === 'driver' && (
-        <div style={{ backgroundColor: 'white', borderRadius: '10px', borderTop: '5px solid #16a34a', padding: '14px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-          <div style={{ backgroundColor: '#f0fdf4', padding: '12px', borderRadius: '8px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <h3 style={{ margin: '0 0 2px 0', color: '#166534', fontSize: '16px' }}>EasyDrive Captain</h3>
-              <p style={{ margin: 0, fontSize: '11px', color: '#15803d' }}>Earnings Wallet: <strong>{driverBalance}</strong></p>
-            </div>
-            <div style={{ fontSize: '28px', background: '#dcfce7', padding: '6px', borderRadius: '50%', textAlign: 'center' }}>💵👨‍✈️</div>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8fafc', padding: '10px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #e2e8f0' }}>
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#334155' }}>Status: {driverOnline ? 'Online (Receiving)' : 'Offline'}</div>
-              <div style={{ fontSize: '10px', color: '#64748b' }}>Priority Score: 100 / 100</div>
-            </div>
-            <button 
-              onClick={() => setDriverOnline(!driverOnline)}
-              style={{ backgroundColor: driverOnline ? '#16a34a' : '#64748b', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer' }}>
-              {driverOnline ? 'GO OFFLINE' : 'GO ONLINE'}
-            </button>
-          </div>
-
-          {driverOnline ? (
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <h4 style={{ margin: 0, color: '#1e293b', fontSize: '13px' }}>Incoming Request (20s Timer)</h4>
-                <span style={{ fontSize: '10px', color: '#d97706', fontWeight: 'bold' }}>Radius: 2.5 km</span>
-              </div>
-
-              <div style={{ border: '2px solid #bbf7d0', backgroundColor: '#f0fdf4', padding: '10px', borderRadius: '6px', marginBottom: '10px' }}>
-                <p style={{ margin: '2px 0', fontSize: '12px' }}><strong>Pickup:</strong> {pickup}</p>
-                <p style={{ margin: '2px 0 6px 0', fontSize: '12px' }}><strong>Drop-off:</strong> {dropoff}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '8px', color: '#166534', fontWeight: 'bold' }}>
-                  <span>Fare: Rs. 960</span>
-                  <span>Pickup Fee: Rs. 30/km</span>
+            ridesHistory.map((r) => (
+              <div
+                key={r.id}
+                style={{
+                  background: '#fff',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  marginBottom: '8px',
+                  border: '1px solid #e5e7eb',
+                  fontSize: '13px'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
+                  <span>{r.ride_type || 'Economy'} • Rs. {r.fare}</span>
+                  <span style={{ color: '#15803d' }}>{r.status}</span>
                 </div>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <button style={{ flex: 1, backgroundColor: '#16a34a', color: 'white', border: 'none', padding: '8px', borderRadius: '4px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}>Accept Ride</button>
-                  <button style={{ flex: 1, backgroundColor: '#dc2626', color: 'white', border: 'none', padding: '8px', borderRadius: '4px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}>Skip / Reject</button>
+                <div style={{ color: '#4b5563', marginTop: '4px' }}>
+                  {r.pickup_address} → {r.dropoff_address}
+                </div>
+                <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                  Payment: {r.payment_method || 'Cash'} | 2% Fee: Rs. {(Number(r.fare) * 0.02).toFixed(2)}
                 </div>
               </div>
-
-              <div style={{ backgroundColor: '#f8fafc', padding: '10px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', marginBottom: '4px' }}>20-Ride Tax / Platform Ledger</div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
-                  <span>Completed Rides: 14 / 20</span>
-                  <span style={{ color: '#d97706', fontWeight: 'bold' }}>Liability Due: Rs. 280</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center', padding: '20px', color: '#64748b', fontSize: '12px' }}>
-              You are currently offline. Tap "Go Online" to receive ride requests.
-            </div>
+            ))
           )}
         </div>
       )}
 
-      {/* ==========================================
-          3. ADMIN PORTAL INTERFACE (EXCEL & LIVE MONITORING)
-         ========================================== */}
-      {appMode === 'admin' && (
-        <div style={{ backgroundColor: 'white', borderRadius: '10px', borderTop: '5px solid #0f172a', padding: '14px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-          <h3 style={{ margin: '0 0 10px 0', fontSize: '15px', color: '#1e293b' }}>Admin Control & Database Hub</h3>
-
-          {/* Admin Navigation Tabs */}
-          <div style={{ display: 'flex', gap: '4px', marginBottom: '12px', overflowX: 'auto', paddingBottom: '4px' }}>
-            <button onClick={() => setAdminTab('driversExcel')} style={{ padding: '6px 8px', borderRadius: '4px', border: 'none', fontSize: '10px', fontWeight: 'bold', backgroundColor: adminTab === 'driversExcel' ? '#0f172a' : '#cbd5e1', color: 'white', whiteSpace: 'nowrap', cursor: 'pointer' }}>
-              Drivers Data Sheet
-            </button>
-            <button onClick={() => setAdminTab('liveRides')} style={{ padding: '6px 8px', borderRadius: '4px', border: 'none', fontSize: '10px', fontWeight: 'bold', backgroundColor: adminTab === 'liveRides' ? '#0f172a' : '#cbd5e1', color: 'white', whiteSpace: 'nowrap', cursor: 'pointer' }}>
-              In-Progress Monitoring
-            </button>
-            <button onClick={() => setAdminTab('taxLedger')} style={{ padding: '6px 8px', borderRadius: '4px', border: 'none', fontSize: '10px', fontWeight: 'bold', backgroundColor: adminTab === 'taxLedger' ? '#0f172a' : '#cbd5e1', color: 'white', whiteSpace: 'nowrap', cursor: 'pointer' }}>
-              2% Tax Ledger
-            </button>
+      {tab === 'offers' && (
+        <div style={{ padding: '14px' }}>
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: '14px',
+              padding: '14px',
+              border: '1px solid #dcfce7'
+            }}
+          >
+            <h3 style={{ margin: '0 0 8px', color: '#15803d' }}>EasyDrive Partner & Rider Offers</h3>
+            <p style={{ fontSize: '13px', color: '#374151', margin: '0 0 8px' }}>
+              • <strong>Driver Monthly Plan:</strong> PKR 3,000 / month via JazzCash or Easypaisa.
+            </p>
+            <p style={{ fontSize: '13px', color: '#374151', margin: 0 }}>
+              • <strong>Ride Commission:</strong> Only 2% platform fee per trip.
+            </p>
           </div>
-
-          {/* TAB 1: Drivers Data Sheet (Excel Style Table) */}
-          {adminTab === 'driversExcel' && (
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#334155' }}>Registered Drivers Database</span>
-                <span style={{ fontSize: '10px', backgroundColor: '#22c55e', color: 'white', padding: '2px 6px', borderRadius: '4px' }}>Excel View Active</span>
-              </div>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', textAlign: 'left' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#f1f5f9', borderBottom: '2px solid #cbd5e1' }}>
-                      <th style={{ padding: '6px' }}>Driver</th>
-                      <th style={{ padding: '6px' }}>Vehicle</th>
-                      <th style={{ padding: '6px' }}>Category</th>
-                      <th style={{ padding: '6px' }}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {driversData.map((d, index) => (
-                      <tr key={index} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                        <td style={{ padding: '6px' }}><strong>{d.name}</strong><br/><span style={{ fontSize: '9px', color: '#64748b' }}>{d.phone}</span></td>
-                        <td style={{ padding: '6px' }}>{d.vehicle}</td>
-                        <td style={{ padding: '6px' }}>{d.category}</td>
-                        <td style={{ padding: '6px' }}><span style={{ color: d.status === 'Approved' ? '#16a34a' : '#d97706', fontWeight: 'bold' }}>{d.status}</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 2: In-Progress Live Rides Monitoring */}
-          {adminTab === 'liveRides' && (
-            <div>
-              <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#1e293b' }}>Active Fleet GPS Tracking</h4>
-              {inProgressRides.map((ride) => (
-                <div key={ride.id} style={{ border: '1px solid #cbd5e1', borderRadius: '6px', padding: '10px', backgroundColor: '#f8fafc', marginBottom: '8px', fontSize: '11px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontWeight: 'bold' }}>
-                    <span style={{ color: '#2563eb' }}>{ride.id}</span>
-                    <span style={{ backgroundColor: '#22c55e', color: 'white', padding: '1px 4px', borderRadius: '3px', fontSize: '9px' }}>LIVE</span>
-                  </div>
-                  <p style={{ margin: '2px 0' }}><strong>Passenger:</strong> {ride.passenger}</p>
-                  <p style={{ margin: '2px 0' }}><strong>Driver:</strong> {ride.driverName} ({ride.driverPhone})</p>
-                  <p style={{ margin: '2px 0' }}><strong>Vehicle:</strong> {ride.vehicleReg} [{ride.category}]</p>
-                  <p style={{ margin: '2px 0' }}><strong>Route:</strong> {ride.pickup} ➔ {ride.dropoff}</p>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '2px', marginTop: '6px', backgroundColor: '#e2e8f0', padding: '4px', borderRadius: '4px', textAlign: 'center' }}>
-                    <div>Travelled: {ride.travelled}</div>
-                    <div>Remaining: {ride.remaining}</div>
-                    <div>ETA: {ride.eta}</div>
-                  </div>
-                </div>
-              ))}
-              <MapComponent />
-            </div>
-          )}
-
-          {/* TAB 3: 2% Financial Tax Liability Ledger */}
-          {adminTab === 'taxLedger' && (
-            <div>
-              <h4 style={{ margin: '0 0 6px 0', fontSize: '13px', color: '#1e293b' }}>2% Tax & Platform Liability Ledger</h4>
-              {taxLedger.map((item, index) => (
-                <div key={index} style={{ border: '1px solid #cbd5e1', borderRadius: '6px', padding: '8px', marginBottom: '6px', backgroundColor: '#f8fafc', fontSize: '11px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', marginBottom: '3px' }}>
-                    <span>{item.driver}</span>
-                    <span style={{ color: '#d97706' }}>{item.status}</span>
-                  </div>
-                  <div>Rides Completed: <strong>{item.rides}/20</strong> | Liability Due: <strong style={{ color: '#dc2626' }}>{item.taxDue}</strong></div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       )}
 
+      {tab === 'profile' && (
+        <div style={{ padding: '14px' }}>
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: '14px',
+              padding: '14px',
+              border: '1px solid #e5e7eb'
+            }}
+          >
+            <h3 style={{ margin: '0 0 6px' }}>EasyDrive-Pakistan Account</h3>
+            <p style={{ fontSize: '13px', color: '#4b5563', margin: 0 }}>
+              City: Karachi • Default Payment: {paymentMethod}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Navigation (Matches graphic: Home, Activity, Offers, Profile) */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '100%',
+          maxWidth: '430px',
+          background: '#fff',
+          borderTop: '1px solid #e5e7eb',
+          display: 'flex',
+          justifyContent: 'space-around',
+          padding: '8px 0'
+        }}
+      >
+        {[
+          { id: 'home', label: 'Home', Icon: Home },
+          { id: 'activity', label: 'Activity', Icon: Clock },
+          { id: 'offers', label: 'Offers', Icon: Tag },
+          { id: 'profile', label: 'Profile', Icon: User }
+        ].map(({ id, label, Icon }) => {
+          const active = tab === id;
+          return (
+            <button
+              key={id}
+              onClick={() => {
+                setTab(id);
+                setScreen('booking');
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: active ? '#16a34a' : '#6b7280',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '2px',
+                fontSize: '11px',
+                fontWeight: active ? 700 : 500,
+                cursor: 'pointer'
+              }}
+            >
+              <Icon size={18} />
+              <span>{label}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
+ 
