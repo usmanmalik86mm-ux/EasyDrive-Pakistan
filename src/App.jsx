@@ -46,6 +46,78 @@ const TIERS = [
   { id: 'Comfort', label: 'Comfort', base: 300, perKm: 90 }
 ];
 
+function LandingHeroGraphic() {
+  return (
+    <div
+      style={{
+        background: 'rgba(9, 13, 22, 0.45)',
+        border: '1px solid rgba(255, 255, 255, 0.22)',
+        borderRadius: '20px',
+        padding: '12px',
+        marginTop: '18px',
+        boxShadow: '0 14px 30px rgba(0, 0, 0, 0.28)'
+      }}
+    >
+      <svg
+        viewBox="0 0 360 165"
+        width="100%"
+        height="auto"
+        role="img"
+        aria-label="EasyDrive Pakistan Ride Visual"
+        style={{ display: 'block', borderRadius: '14px' }}
+      >
+        <defs>
+          <linearGradient id="skyGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#0f172a" />
+            <stop offset="100%" stopColor="#14532d" />
+          </linearGradient>
+          <linearGradient id="carBody" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#fde047" />
+          </linearGradient>
+        </defs>
+
+        <rect x="0" y="0" width="360" height="165" rx="14" fill="url(#skyGrad)" />
+
+        {/* City skyline silhouettes */}
+        <rect x="24" y="42" width="32" height="68" rx="4" fill="#1e293b" opacity="0.85" />
+        <rect x="64" y="28" width="40" height="82" rx="4" fill="#1e293b" opacity="0.9" />
+        <rect x="112" y="50" width="28" height="60" rx="4" fill="#1e293b" opacity="0.75" />
+        <rect x="225" y="34" width="38" height="76" rx="4" fill="#1e293b" opacity="0.85" />
+        <rect x="270" y="48" width="34" height="62" rx="4" fill="#1e293b" opacity="0.8" />
+        <rect x="310" y="38" width="28" height="72" rx="4" fill="#1e293b" opacity="0.9" />
+
+        {/* Route pin & arc */}
+        <path
+          d="M 55 95 Q 180 18 302 92"
+          fill="none"
+          stroke="#4ade80"
+          strokeWidth="2.5"
+          strokeDasharray="6 5"
+        />
+        <circle cx="55" cy="95" r="6" fill="#fde047" />
+        <circle cx="302" cy="92" r="6" fill="#22c55e" />
+
+        {/* Highway & lane markings */}
+        <rect x="0" y="110" width="360" height="55" fill="#090d16" />
+        <line x1="16" y1="137" x2="344" y2="137" stroke="#f59e0b" strokeWidth="3" strokeDasharray="16 12" />
+
+        {/* Modern Ride Car */}
+        <g transform="translate(105, 86)">
+          <rect x="12" y="18" width="126" height="30" rx="11" fill="url(#carBody)" />
+          <path d="M 34 18 L 50 4 L 102 4 L 118 18 Z" fill="#f8fafc" />
+          <rect x="53" y="7" width="21" height="10" rx="3" fill="#0f172a" />
+          <rect x="79" y="7" width="21" height="10" rx="3" fill="#0f172a" />
+          <circle cx="38" cy="48" r="11" fill="#0f172a" stroke="#e2e8f0" strokeWidth="3" />
+          <circle cx="114" cy="48" r="11" fill="#0f172a" stroke="#e2e8f0" strokeWidth="3" />
+          <circle cx="38" cy="48" r="4" fill="#94a3b8" />
+          <circle cx="114" cy="48" r="4" fill="#94a3b8" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export default function App() {
   const [screen, setScreen] = useState('promo'); // 'promo' | 'main'
   const [portal, setPortal] = useState('driver'); // 'driver' | 'passenger' | 'admin'
@@ -235,19 +307,25 @@ export default function App() {
           margin: '0 auto',
           background: 'linear-gradient(180deg, #16a34a 0%, #065f46 65%, #090d16 100%)',
           color: '#fff',
-          padding: '28px 20px',
+          padding: '24px 20px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           fontFamily: 'system-ui, sans-serif'
         }}
       >
-        <div style={{ textAlign: 'center', marginTop: '44px' }}>
-          <div style={{ fontSize: '15px', fontWeight: 900, color: '#fde047' }}>EASYDRIVE-PAKISTAN</div>
-          <h1 style={{ fontSize: '32px', fontWeight: 900, margin: '12px 0 0' }}>AB POORA CASH APKA</h1>
-          <p style={{ fontSize: '13px', color: '#dcfce7', marginTop: '10px' }}>
-            PKR 3,000 / 30 Days • Direct {DIRECT_NUMBER} • 2% Platform Fee
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <div style={{ fontSize: '14px', fontWeight: 900, color: '#fde047', letterSpacing: '1px' }}>
+            EASYDRIVE-PAKISTAN
+          </div>
+          <h1 style={{ fontSize: '30px', fontWeight: 900, margin: '10px 0 0', lineHeight: 1.15 }}>
+            AB POORA CASH APKA
+          </h1>
+          <p style={{ fontSize: '13px', color: '#dcfce7', marginTop: '8px' }}>
+            PKR 3,000 / 30 Days • Smart City Rides
           </p>
+
+          <LandingHeroGraphic />
         </div>
 
         <button
@@ -261,7 +339,8 @@ export default function App() {
             color: '#090d16',
             fontSize: '16px',
             fontWeight: 900,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            marginTop: '18px'
           }}
         >
           Launch EasyDrive-Pakistan →
@@ -430,7 +509,6 @@ export default function App() {
       {/* ==================== 1. DRIVER PRO ==================== */}
       {portal === 'driver' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {/* Registration Status Banner */}
           <div
             style={{
               background: theme.card,
@@ -540,7 +618,7 @@ export default function App() {
             </div>
           )}
 
-          {/* Driver Registration Form (Without GPS/Notification/Camera/Mic buttons) */}
+          {/* Clean Driver Registration Form */}
           <form onSubmit={submitRegistration} style={{ background: theme.card, border: `1.5px solid ${theme.border}`, borderRadius: '16px', padding: '14px' }}>
             <div style={{ fontSize: '16px', fontWeight: 900, color: theme.green, marginBottom: '10px' }}>
               Driver Registration & PKR 3,000 Payment
@@ -824,4 +902,137 @@ export default function App() {
 
           <div style={{ background: theme.box, borderRadius: '10px', padding: '10px', fontSize: '12px', marginBottom: '12px' }}>
             <div><strong>Driver:</strong> {form.name || 'Not submitted yet'}</div>
-            <div><strong>CNIC:</strong> {form.cnic || '-'} |
+            <div><strong>CNIC:</strong> {form.cnic || '-'} | <strong>Mobile:</strong> {form.mobile || '-'}</div>
+            <div><strong>Vehicle:</strong> {form.model || '-'} ({form.regNo || '-'})</div>
+            <div><strong>Payment:</strong> PKR 3,000 via {form.method} to {DIRECT_NUMBER} • TID: {form.tid || '-'}</div>
+            <div style={{ marginTop: '4px' }}>
+              <strong>Current Status:</strong>{' '}
+              <strong style={{ color: regStatus === 'approved' ? theme.green : regStatus === 'not_approved' ? '#ef4444' : theme.gold }}>
+                {regStatusLabel}
+              </strong>
+            </div>
+          </div>
+
+          <div style={{ background: theme.box, borderRadius: '12px', padding: '10px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 900, marginBottom: '8px' }}>
+              Attached Documents & Vehicle Photos ({attachedSlots.length}/{PHOTO_SLOTS.length})
+            </div>
+
+            {attachedSlots.length === 0 ? (
+              <div style={{ fontSize: '11px', color: theme.muted }}>Koi document ya photo attach nahi hui.</div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                {attachedSlots.map((slot) => {
+                  const docItem = files[slot.key];
+                  return (
+                    <div
+                      key={slot.key}
+                      style={{
+                        background: theme.card,
+                        border: `1px solid ${theme.border}`,
+                        borderRadius: '10px',
+                        padding: '6px',
+                        fontSize: '11px'
+                      }}
+                    >
+                      <img
+                        src={docItem.url}
+                        alt={slot.label}
+                        style={{ width: '100%', height: '64px', objectFit: 'cover', borderRadius: '7px', marginBottom: '4px' }}
+                      />
+                      <div style={{ fontWeight: 800, color: theme.green }}>{slot.label}</div>
+                      <div style={{ fontSize: '10px', color: theme.muted, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {docItem.name}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div style={{ fontSize: '12px', fontWeight: 800, marginBottom: '6px' }}>
+            Driver Registration Decision:
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '12px' }}>
+            <button
+              type="button"
+              onClick={() => setAdminDriverStatus('approved')}
+              style={{
+                padding: '10px 6px',
+                borderRadius: '10px',
+                border: 'none',
+                background: theme.green,
+                color: '#fff',
+                fontWeight: 900,
+                fontSize: '11px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '3px',
+                cursor: 'pointer'
+              }}
+            >
+              <CheckCircle2 size={13} /> Approved
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setAdminDriverStatus('not_approved')}
+              style={{
+                padding: '10px 6px',
+                borderRadius: '10px',
+                border: 'none',
+                background: '#dc2626',
+                color: '#fff',
+                fontWeight: 900,
+                fontSize: '11px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '3px',
+                cursor: 'pointer'
+              }}
+            >
+              <XCircle size={13} /> Not Approved
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setAdminDriverStatus('pending')}
+              style={{
+                padding: '10px 6px',
+                borderRadius: '10px',
+                border: 'none',
+                background: theme.gold,
+                color: '#090d16',
+                fontWeight: 900,
+                fontSize: '11px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '3px',
+                cursor: 'pointer'
+              }}
+            >
+              <Clock size={13} /> Pending
+            </button>
+          </div>
+
+          <form onSubmit={sendBroadcast} style={{ background: theme.box, borderRadius: '10px', padding: '10px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 800, marginBottom: '6px' }}>Send Broadcast / Warning to Drivers</div>
+            <input
+              value={broadcastInput}
+              onChange={(e) => setBroadcastInput(e.target.value)}
+              placeholder="Write alert or bonus message..."
+              style={{ width: '100%', padding: '8px', borderRadius: '8px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, fontSize: '12px', marginBottom: '8px', boxSizing: 'border-box' }}
+            />
+            <button type="submit" style={{ width: '100%', padding: '9px', borderRadius: '8px', border: 'none', background: theme.gold, color: '#090d16', fontWeight: 900, fontSize: '12px', cursor: 'pointer' }}>
+              Broadcast Message
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
