@@ -22,8 +22,9 @@ import MapView from './components/MapView';
 import { supabase } from './lib/supabase';
 
 const FARE_OPTIONS = [
-  { id: 'Economy', label: 'Economy', seats: '4 seats', fare: 320 },
-  { id: 'Business', label: 'Business', seats: '4 seats', fare: 520 }
+const FARE_OPTIONS = [
+  { id: 'Economy', label: 'Economy', seats: '4 seats', fare: 320, eta: '3 min', estTime: '10 min' },
+  { id: 'Business', label: 'Business', seats: '4 seats', fare: 520, eta: '2 min', estTime: '9 min' }
 ];
 
 const PAYMENT_METHODS = ['Cash', 'JazzCash', 'Easypaisa'];
