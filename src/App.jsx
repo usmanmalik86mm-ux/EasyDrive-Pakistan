@@ -22,7 +22,6 @@ import MapView from './components/MapView';
 import { supabase } from './lib/supabase';
 
 const FARE_OPTIONS = [
-const FARE_OPTIONS = [
   { id: 'Economy', label: 'Economy', seats: '4 seats', fare: 320, eta: '3 min', estTime: '10 min' },
   { id: 'Business', label: 'Business', seats: '4 seats', fare: 520, eta: '2 min', estTime: '9 min' }
 ];
@@ -613,6 +612,30 @@ export default function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#4b5563', marginTop: '8px' }}>
                   <span>Fare: <strong>Rs. {activeFareObj.fare}</strong></span>
                   <span>2% Platform Fee: <strong>Rs. {platformFee}</strong></span>
+                </div>
+
+                <div
+                  style={{
+                    background: '#f8fafc',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '10px',
+                    padding: '9px 11px',
+                    marginTop: '9px',
+                    fontSize: '12px',
+                    color: '#374151'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, marginBottom: '4px' }}>
+                    <span>Ride Details ({activeFareObj.label})</span>
+                    <span style={{ color: '#15803d' }}>ETA: {activeFareObj.eta}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#4b5563' }}>
+                    <span>Est. Trip: <strong>{activeFareObj.estTime}</strong></span>
+                    <span>Payment: <strong>{paymentMethod}</strong></span>
+                  </div>
+                  <div style={{ marginTop: '4px', color: '#6b7280', fontSize: '11px' }}>
+                    {pickup || 'Pickup'} → {dropoff || 'Dropoff'}
+                  </div>
                 </div>
 
                 <button
