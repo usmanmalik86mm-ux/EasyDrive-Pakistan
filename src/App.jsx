@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Wallet
 } from 'lucide-react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import MapView from './components/MapView';
 import { supabase } from './lib/supabase';
 
@@ -722,6 +723,7 @@ export default function App() {
           );
         })}
       </div>
+      <SpeedInsights />
     </div>
   );
 }
