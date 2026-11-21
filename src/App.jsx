@@ -21,7 +21,9 @@ import {
   XCircle,
   Sparkles,
   Navigation,
-  Shield
+  Shield,
+  Play,
+  SkipForward
 } from 'lucide-react';
 
 const DIRECT_NUMBER = '03338209526';
@@ -79,16 +81,8 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
         boxSizing: 'border-box'
       }}
     >
-      {/* Top Brand Pill */}
       <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '8px'
-          }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
           <span
             style={{
               display: 'inline-flex',
@@ -122,7 +116,6 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
           </span>
         </div>
 
-        {/* Hero Headline */}
         <div style={{ marginTop: '18px' }}>
           <h1
             style={{
@@ -138,19 +131,11 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
           >
             AB POORA CASH APKA
           </h1>
-          <p
-            style={{
-              margin: '8px 0 0',
-              fontSize: '13px',
-              lineHeight: 1.45,
-              color: '#cbd5e1'
-            }}
-          >
+          <p style={{ margin: '8px 0 0', fontSize: '13px', lineHeight: 1.45, color: '#cbd5e1' }}>
             Drivers ke liye full monthly freedom aur passengers ke liye PIN-secured, transparent city rides.
           </p>
         </div>
 
-        {/* Realistic App Preview Stage */}
         <div
           style={{
             marginTop: '18px',
@@ -161,16 +146,8 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
             padding: '14px'
           }}
         >
-          {/* Simulated Map & Route Canvas */}
           <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden' }}>
-            <svg
-              viewBox="0 0 360 154"
-              width="100%"
-              height="auto"
-              role="img"
-              aria-label="EasyDrive Live Route Preview"
-              style={{ display: 'block' }}
-            >
+            <svg viewBox="0 0 360 154" width="100%" height="auto" role="img" aria-label="EasyDrive Live Route Preview" style={{ display: 'block' }}>
               <defs>
                 <linearGradient id="mapBg" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stopColor="#0f172a" />
@@ -185,7 +162,6 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
 
               <rect x="0" y="0" width="360" height="154" fill="url(#mapBg)" />
 
-              {/* Subtle city blocks & street grid */}
               <g opacity="0.22" stroke="#64748b" strokeWidth="1" fill="#1e293b">
                 <rect x="16" y="16" width="76" height="42" rx="6" />
                 <rect x="104" y="16" width="92" height="42" rx="6" />
@@ -195,7 +171,6 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
                 <rect x="254" y="72" width="90" height="58" rx="6" />
               </g>
 
-              {/* Active Navigation Path */}
               <path
                 d="M 48 112 C 105 112, 118 46, 180 46 C 242 46, 252 96, 310 56"
                 fill="none"
@@ -205,25 +180,14 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
                 strokeDasharray="8 5"
               />
 
-              {/* Pickup & Destination Pins */}
               <circle cx="48" cy="112" r="9" fill="rgba(34, 197, 94, 0.25)" />
               <circle cx="48" cy="112" r="5" fill="#22c55e" />
 
               <circle cx="310" cy="56" r="9" fill="rgba(245, 158, 11, 0.25)" />
               <circle cx="310" cy="56" r="5" fill="#f59e0b" />
 
-              {/* Sleek Vehicle Marker */}
               <g transform="translate(154, 28)">
-                <rect
-                  x="0"
-                  y="0"
-                  width="54"
-                  height="24"
-                  rx="11"
-                  fill="#090d16"
-                  stroke={carFill}
-                  strokeWidth="2"
-                />
+                <rect x="0" y="0" width="54" height="24" rx="11" fill="#090d16" stroke={carFill} strokeWidth="2" />
                 <path d="M 11 15 L 16 7 L 36 7 L 41 15 Z" fill="#f8fafc" />
                 <rect x="2" y="12" width="50" height="9" rx="4.5" fill={carFill} />
                 <circle cx="13" cy="21" r="3.5" fill="#090d16" />
@@ -231,7 +195,6 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
               </g>
             </svg>
 
-            {/* Floating Route Pill on Map */}
             <div
               style={{
                 position: 'absolute',
@@ -258,7 +221,6 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
             </div>
           </div>
 
-          {/* Interactive Tier Selector */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginTop: '10px' }}>
             {TIERS.map((t) => {
               const isSelected = t.id === previewTier;
@@ -284,49 +246,17 @@ function RealisticLandingShowcase({ previewTier, setPreviewTier, onLaunch }) {
             })}
           </div>
 
-          {/* Trust Highlights Strip */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '8px',
-              marginTop: '10px',
-              fontSize: '11px'
-            }}
-          >
-            <div
-              style={{
-                background: 'rgba(15, 23, 42, 0.65)',
-                borderRadius: '10px',
-                padding: '8px 10px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                color: '#dcfce7',
-                fontWeight: 700
-              }}
-            >
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '10px', fontSize: '11px' }}>
+            <div style={{ background: 'rgba(15, 23, 42, 0.65)', borderRadius: '10px', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '6px', color: '#dcfce7', fontWeight: 700 }}>
               <KeyRound size={14} color="#4ade80" /> 4-Digit Ride PIN
             </div>
-            <div
-              style={{
-                background: 'rgba(15, 23, 42, 0.65)',
-                borderRadius: '10px',
-                padding: '8px 10px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                color: '#fef08a',
-                fontWeight: 700
-              }}
-            >
+            <div style={{ background: 'rgba(15, 23, 42, 0.65)', borderRadius: '10px', padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '6px', color: '#fef08a', fontWeight: 700 }}>
               <Shield size={14} color="#f59e0b" /> Instant SOS Shield
             </div>
           </div>
         </div>
       </div>
 
-      {/* Primary Launch CTA */}
       <div style={{ marginTop: '18px' }}>
         <button
           type="button"
@@ -373,7 +303,7 @@ export default function App() {
   // Status values: 'pending' | 'approved' | 'not_approved'
   const [regStatus, setRegStatus] = useState('pending');
   const [daysLeft, setDaysLeft] = useState(30);
-  const [priority, setPriority] = useState(68);
+  const [priority, setPriority] = useState(100); // Starts at 100
   const [completedCount, setCompletedCount] = useState(0);
   const [driverEarnings, setDriverEarnings] = useState(0);
   const [welcomeMsg, setWelcomeMsg] = useState('');
@@ -391,7 +321,8 @@ export default function App() {
     payment: 'JazzCash',
     pin: '4829',
     pinInput: '',
-    stage: 'idle'
+    // 'idle' | 'searching' | 'arriving' | 'in_progress' | 'completed'
+    stage: 'searching'
   });
 
   const [msg, setMsg] = useState('');
@@ -436,6 +367,8 @@ export default function App() {
   const driverNetCash = Number((calculatedFare - feeTwoPercent).toFixed(2));
   const estMinutes = Math.max(5, Math.round(totalRouteKm * 2.4 + validStops.length * 4));
 
+  const isDuringRide = ride.stage === 'arriving' || ride.stage === 'in_progress';
+
   function handleUpload(key, e) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -466,7 +399,7 @@ export default function App() {
     if (nextStatus === 'approved') {
       setDaysLeft(30);
       setWelcomeMsg('Welcome aboard! Aapka EasyDrive Driver Pro account approve ho gaya hai — Ab Poora Cash Apka!');
-      setMsg('Status set to Approved (Welcome aboard).');
+      setMsg('Driver approve ho gaya! Driver Pro mein Live Rides & Start Ride panel active hai.');
     } else if (nextStatus === 'not_approved') {
       setWelcomeMsg('');
       setMsg('Status set to Not Approved.');
@@ -488,12 +421,25 @@ export default function App() {
       pinInput: '',
       stage: 'searching'
     }));
-    setMsg(`Ride request bhej di gayi hai! Fare: Rs. ${calculatedFare} • Start PIN: ${randomPin}.`);
+    setMsg(`Ride request bhej di gayi hai! Final Fare: Rs. ${calculatedFare} • Start PIN: ${randomPin}.`);
   }
 
   function driverAcceptRide() {
-    setRide((prev) => ({ ...prev, stage: 'arriving' }));
-    setMsg('Trip accept ho gayi! Passenger se 4-digit PIN le kar trip start karein.');
+    setPriority((p) => p + 2);
+    setRide((prev) => ({ ...prev, stage: 'arriving', pinInput: '' }));
+    setMsg('Ride Accept ho gayi! Priority +2 barh gayi. Ab 4-digit PIN daal kar Start Ride karein.');
+  }
+
+  function driverSkipOrMissRide() {
+    setPriority((p) => p - 1);
+    const nextPin = String(Math.floor(1000 + Math.random() * 9000));
+    setRide((prev) => ({
+      ...prev,
+      pin: nextPin,
+      pinInput: '',
+      stage: 'searching'
+    }));
+    setMsg('Ride skip/miss ho gayi! Priority -1 kam ho gayi. Agli ride request ready hai.');
   }
 
   function driverStartWithPin() {
@@ -502,22 +448,28 @@ export default function App() {
       return;
     }
     setRide((prev) => ({ ...prev, stage: 'in_progress' }));
-    setMsg('PIN verify ho gaya! Trip In Progress hai.');
+    setMsg('PIN verify ho gaya! Ride Start ho gayi (Pickup se Dropoff In Progress).');
   }
 
   function driverCompleteRide() {
+    const nextPin = String(Math.floor(1000 + Math.random() * 9000));
     setCompletedCount((c) => c + 1);
     setDriverEarnings((e) => e + calculatedFare);
-    setPriority((p) => p + 2);
-    setRide((prev) => ({ ...prev, stage: 'completed', pinInput: '' }));
-    setMsg(`Trip complete! Final Fare: Rs. ${calculatedFare} | 2% Fee: Rs. ${feeTwoPercent} | Priority +2.`);
+    setSosActive(false);
+    setRide((prev) => ({
+      ...prev,
+      pin: nextPin,
+      pinInput: '',
+      stage: 'searching'
+    }));
+    setMsg(`Trip complete! Earning: Rs. ${calculatedFare} | 2% Fee: Rs. ${feeTwoPercent}. Agli ride request aa gayi hai.`);
   }
 
   function triggerSOS() {
     setSosActive(true);
-    const info = `SOS ALERT! Route: ${ride.pickup} → ${ride.dropoff} | Driver: ${form.name || 'Assigned Driver'} | Gari: ${form.regNo || 'BRG-739'}`;
+    const info = `EMERGENCY SOS! Route: ${ride.pickup} → ${ride.dropoff} | Driver: ${form.name || 'Assigned Driver'} | Gari: ${form.regNo || 'BRG-739'}`;
     if (navigator.share) {
-      navigator.share({ title: 'EasyDrive SOS Alert', text: info }).catch(() => {});
+      navigator.share({ title: 'EasyDrive Emergency SOS', text: info }).catch(() => {});
     }
     setMsg(info);
   }
@@ -567,6 +519,7 @@ export default function App() {
           { id: 'admin', label: 'Admin', Icon: ShieldCheck }
         ].map(({ id, label, Icon }) => (
           <button
+            type="button"
             key={id}
             onClick={() => setPortal(id)}
             style={{
@@ -590,6 +543,7 @@ export default function App() {
         ))}
 
         <button
+          type="button"
           onClick={() => setSunlight((s) => !s)}
           style={{
             padding: '9px 10px',
@@ -652,7 +606,7 @@ export default function App() {
         </div>
       )}
 
-      {/* SOS Alert Box */}
+      {/* Active SOS Alert Banner */}
       {sosActive && (
         <div
           style={{
@@ -669,13 +623,14 @@ export default function App() {
           }}
         >
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <AlertTriangle size={16} /> SOS Emergency Active!
+            <AlertTriangle size={16} /> Emergency SOS Triggered!
           </span>
           <button
+            type="button"
             onClick={() => setSosActive(false)}
-            style={{ background: '#fff', color: '#991b1b', border: 'none', borderRadius: '6px', padding: '3px 8px', fontWeight: 900, fontSize: '11px' }}
+            style={{ background: '#fff', color: '#991b1b', border: 'none', borderRadius: '6px', padding: '3px 8px', fontWeight: 900, fontSize: '11px', cursor: 'pointer' }}
           >
-            Clear SOS
+            Close
           </button>
         </div>
       )}
@@ -697,7 +652,7 @@ export default function App() {
           }}
         >
           <span>{msg}</span>
-          <button onClick={() => setMsg('')} style={{ background: 'none', border: 'none', color: 'inherit', fontWeight: 900 }}>
+          <button type="button" onClick={() => setMsg('')} style={{ background: 'none', border: 'none', color: 'inherit', fontWeight: 900, cursor: 'pointer' }}>
             ×
           </button>
         </div>
@@ -706,6 +661,7 @@ export default function App() {
       {/* ==================== 1. DRIVER PRO ==================== */}
       {portal === 'driver' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {/* Registration Status Banner */}
           <div
             style={{
               background: theme.card,
@@ -729,6 +685,7 @@ export default function App() {
             </div>
           </div>
 
+          {/* Approved Driver Active Rides & Start Ride Flow */}
           {regStatus === 'approved' && (
             <div style={{ background: theme.card, border: `1.5px solid ${theme.green}`, borderRadius: '16px', padding: '14px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -753,69 +710,133 @@ export default function App() {
                 </div>
                 <div style={{ background: theme.box, padding: '9px', borderRadius: '10px' }}>
                   <div style={{ fontSize: '10px', color: theme.muted }}>Priority</div>
-                  <div style={{ fontSize: '14px', fontWeight: 900, color: theme.gold }}>+{priority}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 900, color: theme.gold }}>{priority}</div>
                 </div>
               </div>
 
-              {ride.stage !== 'idle' && ride.stage !== 'completed' && (
-                <div style={{ marginTop: '12px', background: theme.box, border: `1px solid ${theme.gold}`, borderRadius: '12px', padding: '12px' }}>
-                  <div style={{ fontSize: '13px', fontWeight: 900, color: theme.gold }}>
-                    Final Fare ({ride.tier}): Rs. {calculatedFare}
-                  </div>
-                  <div style={{ fontSize: '12px', marginTop: '4px' }}>
-                    {routeSummaryText} ({totalRouteKm} km • ~{estMinutes} min)
-                  </div>
-                  <div style={{ fontSize: '11px', color: theme.muted, marginTop: '3px' }}>
-                    Payment: {ride.payment} • 2% Fee: Rs. {feeTwoPercent} • Driver Net: Rs. {driverNetCash}
-                  </div>
+              {/* Rides Status & Start Ride Card */}
+              <div style={{ marginTop: '12px', background: theme.box, border: `1px solid ${theme.gold}`, borderRadius: '12px', padding: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 900, color: theme.gold }}>
+                    Rides Status: {ride.stage === 'searching' ? 'New Ride Request' : ride.stage === 'arriving' ? 'Ready to Start Ride' : ride.stage === 'in_progress' ? 'Ride In Progress (Pickup → Dropoff)' : 'Waiting for Ride'}
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 900, color: '#fde047' }}>Rs. {calculatedFare}</span>
+                </div>
 
-                  {ride.stage === 'searching' && (
+                <div style={{ fontSize: '12px', marginTop: '6px' }}>
+                  {routeSummaryText} ({totalRouteKm} km • ~{estMinutes} min)
+                </div>
+                <div style={{ fontSize: '11px', color: theme.muted, marginTop: '3px' }}>
+                  Tier: {ride.tier} • Payment: {ride.payment} • Driver Net: Rs. {driverNetCash}
+                </div>
+
+                {/* New Ride Request: Accept (+2 Priority) or Skip/Miss (-1 Priority) */}
+                {ride.stage === 'searching' && (
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                     <button
+                      type="button"
                       onClick={driverAcceptRide}
-                      style={{ marginTop: '10px', width: '100%', padding: '9px', borderRadius: '9px', border: 'none', background: theme.green, color: '#fff', fontWeight: 800, cursor: 'pointer' }}
+                      style={{ flex: 1, padding: '10px', borderRadius: '9px', border: 'none', background: theme.green, color: '#fff', fontWeight: 900, fontSize: '12px', cursor: 'pointer' }}
                     >
-                      Accept Ride
+                      Accept Ride (+2)
                     </button>
-                  )}
+                    <button
+                      type="button"
+                      onClick={driverSkipOrMissRide}
+                      style={{ flex: 1, padding: '10px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.card, color: '#f87171', fontWeight: 900, fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', cursor: 'pointer' }}
+                    >
+                      <SkipForward size={14} /> Skip / Miss (-1)
+                    </button>
+                  </div>
+                )}
 
-                  {ride.stage === 'arriving' && (
-                    <div style={{ marginTop: '10px' }}>
+                {/* Accepted Ride: Enter 4-Digit PIN & Start Ride */}
+                {ride.stage === 'arriving' && (
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch', marginTop: '10px' }}>
+                    <div style={{ flex: 1 }}>
                       <input
                         value={ride.pinInput}
                         onChange={(e) => setRide({ ...ride, pinInput: e.target.value })}
-                        placeholder={`Enter 4-Digit Start PIN (Hint: ${ride.pin})`}
-                        style={{ width: '100%', padding: '8px', borderRadius: '8px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, marginBottom: '8px', boxSizing: 'border-box' }}
+                        placeholder={`4-Digit PIN (${ride.pin})`}
+                        style={{ width: '100%', padding: '9px', borderRadius: '8px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, marginBottom: '8px', boxSizing: 'border-box', fontSize: '12px' }}
                       />
                       <button
+                        type="button"
                         onClick={driverStartWithPin}
-                        style={{ width: '100%', padding: '9px', borderRadius: '9px', border: 'none', background: theme.gold, color: '#090d16', fontWeight: 900, cursor: 'pointer' }}
+                        style={{ width: '100%', padding: '10px', borderRadius: '9px', border: 'none', background: theme.gold, color: '#090d16', fontWeight: 900, fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', cursor: 'pointer' }}
                       >
-                        Verify PIN & Start Trip
+                        <Play size={14} /> Start Ride
                       </button>
                     </div>
-                  )}
 
-                  {ride.stage === 'in_progress' && (
+                    {/* Side Emergency SOS Button During Ride */}
                     <button
-                      onClick={driverCompleteRide}
-                      style={{ marginTop: '10px', width: '100%', padding: '9px', borderRadius: '9px', border: 'none', background: theme.green, color: '#fff', fontWeight: 900, cursor: 'pointer' }}
+                      type="button"
+                      onClick={triggerSOS}
+                      title="Emergency SOS"
+                      style={{
+                        width: '62px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        background: '#dc2626',
+                        color: '#fff',
+                        fontWeight: 900,
+                        fontSize: '11px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '3px',
+                        cursor: 'pointer'
+                      }}
                     >
-                      Complete Trip (Final Fare: Rs. {calculatedFare})
+                      <AlertTriangle size={16} />
+                      <span>SOS</span>
                     </button>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
 
-              <button
-                onClick={triggerSOS}
-                style={{ marginTop: '12px', width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}
-              >
-                SOS Emergency Alert
-              </button>
+                {/* Ride In Progress (Pickup to Dropoff) + Side Emergency SOS Button */}
+                {ride.stage === 'in_progress' && (
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch', marginTop: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={driverCompleteRide}
+                      style={{ flex: 1, padding: '11px', borderRadius: '9px', border: 'none', background: theme.green, color: '#fff', fontWeight: 900, fontSize: '12px', cursor: 'pointer' }}
+                    >
+                      Complete Ride (Rs. {calculatedFare})
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={triggerSOS}
+                      title="Emergency SOS"
+                      style={{
+                        width: '62px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        background: '#dc2626',
+                        color: '#fff',
+                        fontWeight: 900,
+                        fontSize: '11px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '3px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <AlertTriangle size={16} />
+                      <span>SOS</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
-          {/* Clean Driver Registration Form */}
+          {/* Clean Driver Registration Form (No SOS button here) */}
           <form onSubmit={submitRegistration} style={{ background: theme.card, border: `1.5px solid ${theme.border}`, borderRadius: '16px', padding: '14px' }}>
             <div style={{ fontSize: '16px', fontWeight: 900, color: theme.green, marginBottom: '10px' }}>
               Driver Registration & PKR 3,000 Payment
@@ -885,7 +906,7 @@ export default function App() {
                     navigator.clipboard?.writeText(DIRECT_NUMBER);
                     setMsg(`${DIRECT_NUMBER} copy ho gaya.`);
                   }}
-                  style={{ padding: '4px 8px', borderRadius: '6px', border: 'none', background: theme.green, color: '#fff', fontSize: '11px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}
+                  style={{ padding: '4px 8px', borderRadius: '6px', border: 'none', background: theme.green, color: '#fff', fontSize: '11px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}
                 >
                   <Copy size={12} /> Copy
                 </button>
@@ -898,7 +919,7 @@ export default function App() {
                   type="button"
                   key={m}
                   onClick={() => setForm({ ...form, method: m })}
-                  style={{ flex: 1, padding: '8px', borderRadius: '8px', border: form.method === m ? `2px solid ${theme.green}` : `1px solid ${theme.border}`, background: form.method === m ? theme.box : theme.bg, color: theme.text, fontWeight: 800, fontSize: '12px' }}
+                  style={{ flex: 1, padding: '8px', borderRadius: '8px', border: form.method === m ? `2px solid ${theme.green}` : `1px solid ${theme.border}`, background: form.method === m ? theme.box : theme.bg, color: theme.text, fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}
                 >
                   {m}
                 </button>
@@ -931,7 +952,7 @@ export default function App() {
               <button
                 type="button"
                 key={idx}
-                onClick={() => setRide({ ...ride, pickup: r.pickup, dropoff: r.dropoff, km: r.km })}
+                onClick={() => setRide((prev) => ({ ...prev, pickup: r.pickup, dropoff: r.dropoff, km: r.km }))}
                 style={{ padding: '5px 8px', borderRadius: '8px', border: `1px solid ${theme.border}`, background: theme.box, color: theme.text, fontSize: '10px', fontWeight: 800, cursor: 'pointer' }}
               >
                 <Route size={11} style={{ verticalAlign: 'middle', marginRight: '3px' }} />
@@ -942,7 +963,7 @@ export default function App() {
 
           <input
             value={ride.pickup}
-            onChange={(e) => setRide({ ...ride, pickup: e.target.value })}
+            onChange={(e) => setRide((prev) => ({ ...prev, pickup: e.target.value }))}
             placeholder="Any Pickup Location"
             style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, marginBottom: '8px', boxSizing: 'border-box' }}
           />
@@ -983,7 +1004,7 @@ export default function App() {
 
           <input
             value={ride.dropoff}
-            onChange={(e) => setRide({ ...ride, dropoff: e.target.value })}
+            onChange={(e) => setRide((prev) => ({ ...prev, dropoff: e.target.value }))}
             placeholder="Final Destination"
             style={{ width: '100%', padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, marginBottom: '8px', boxSizing: 'border-box' }}
           />
@@ -995,7 +1016,7 @@ export default function App() {
               min="1"
               max="150"
               value={ride.km}
-              onChange={(e) => setRide({ ...ride, km: e.target.value })}
+              onChange={(e) => setRide((prev) => ({ ...prev, km: e.target.value }))}
               style={{ width: '68px', padding: '5px', borderRadius: '6px', border: `1px solid ${theme.border}`, background: theme.bg, color: theme.text, fontWeight: 800 }}
             />
           </div>
@@ -1005,7 +1026,7 @@ export default function App() {
               <button
                 type="button"
                 key={t.id}
-                onClick={() => setRide({ ...ride, tier: t.id })}
+                onClick={() => setRide((prev) => ({ ...prev, tier: t.id }))}
                 style={{ padding: '8px 6px', borderRadius: '9px', border: ride.tier === t.id ? `2px solid ${theme.green}` : `1px solid ${theme.border}`, background: ride.tier === t.id ? theme.box : theme.bg, color: theme.text, fontSize: '11px', fontWeight: 800, cursor: 'pointer' }}
               >
                 <div>{t.label}</div>
@@ -1019,7 +1040,7 @@ export default function App() {
               <button
                 type="button"
                 key={pm}
-                onClick={() => setRide({ ...ride, payment: pm })}
+                onClick={() => setRide((prev) => ({ ...prev, payment: pm }))}
                 style={{ flex: 1, padding: '7px', borderRadius: '8px', border: ride.payment === pm ? `2px solid ${theme.green}` : `1px solid ${theme.border}`, background: ride.payment === pm ? theme.box : theme.bg, color: theme.text, fontSize: '11px', fontWeight: 800, cursor: 'pointer' }}
               >
                 {pm}
@@ -1039,32 +1060,27 @@ export default function App() {
               2% Fee: Rs. {feeTwoPercent} • Driver Net: Rs. {driverNetCash}
             </div>
 
-            {ride.stage !== 'idle' && (
-              <div style={{ marginTop: '8px', padding: '7px 9px', borderRadius: '8px', background: theme.card, border: `1px solid ${theme.green}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 800 }}>
-                  <KeyRound size={14} color={theme.green} /> Start PIN:
-                </span>
-                <strong style={{ fontSize: '15px', letterSpacing: '2px', color: theme.gold }}>{ride.pin}</strong>
-              </div>
-            )}
+            <div style={{ marginTop: '8px', padding: '7px 9px', borderRadius: '8px', background: theme.card, border: `1px solid ${theme.green}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 800 }}>
+                <KeyRound size={14} color={theme.green} /> Start PIN:
+              </span>
+              <strong style={{ fontSize: '15px', letterSpacing: '2px', color: theme.gold }}>{ride.pin}</strong>
+            </div>
           </div>
 
           <button
+            type="button"
             onClick={startPassengerRide}
             style={{ width: '100%', padding: '12px', borderRadius: '11px', border: 'none', background: theme.green, color: '#fff', fontWeight: 900, fontSize: '14px', cursor: 'pointer' }}
           >
-            {ride.stage === 'searching' ? 'Finding Driver...' : 'Request Ride & Get PIN'}
+            Request Ride & Get PIN
           </button>
 
-          {ride.stage !== 'idle' && (
-            <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+          {/* Side Emergency SOS During Ride (Pickup to Dropoff) */}
+          {isDuringRide && (
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '10px' }}>
               <button
-                onClick={triggerSOS}
-                style={{ flex: 1, padding: '9px', borderRadius: '9px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}
-              >
-                SOS
-              </button>
-              <button
+                type="button"
                 onClick={() => {
                   const text = `EasyDrive Ride: ${routeSummaryText} | Final Fare Rs. ${calculatedFare} | PIN ${ride.pin}`;
                   navigator.clipboard?.writeText(text);
@@ -1073,6 +1089,14 @@ export default function App() {
                 style={{ flex: 1, padding: '9px', borderRadius: '9px', border: `1px solid ${theme.border}`, background: theme.box, color: theme.text, fontWeight: 800, fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', cursor: 'pointer' }}
               >
                 <Share2 size={13} /> Share Trip
+              </button>
+
+              <button
+                type="button"
+                onClick={triggerSOS}
+                style={{ width: '74px', padding: '9px', borderRadius: '9px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 900, fontSize: '12px', cursor: 'pointer' }}
+              >
+                SOS
               </button>
             </div>
           )}
